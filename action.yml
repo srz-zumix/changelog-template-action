@@ -71,23 +71,22 @@ runs:
           --token="${GITHUB_TOKEN}" \
           --repo="${{ inputs.path }}" \
           > "${{ runner.temp }}/ghch-changelog.json"
-      - name: kamidana
-        id: kamidana
-        uses: srz-zumix/kamidana-action@main
-        with:
-          template: "${{ inputs.template }}"
-          output_file: "${{ inputs.output_file }}"
-          data_file: "${{ runner.temp }}/ghch-changelog.json"
-          input_format: "json"
-          tee: true
-          extensions: |
-            i18n
-            do
-            loopcontrols
-            with_
-            autoescape
-            debug
-
+    - name: kamidana
+      id: kamidana
+      uses: srz-zumix/kamidana-action@main
+      with:
+        template: "${{ inputs.template }}"
+        output_file: "${{ inputs.output_file }}"
+        data_file: "${{ runner.temp }}/ghch-changelog.json"
+        input_format: "json"
+        tee: true
+        extensions: |
+          i18n
+          do
+          loopcontrols
+          with_
+          autoescape
+          debug
 
 
 branding:
