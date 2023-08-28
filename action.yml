@@ -72,7 +72,7 @@ runs:
       id: kamidana
       uses: srz-zumix/kamidana-action@main
       with:
-        template: "${{ inputs.template }}"
+        template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"
         data_file: "${{ runner.temp }}/ghch-changelog.json"
         input_format: "json"
