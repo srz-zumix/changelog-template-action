@@ -1,0 +1,8 @@
+[Compare {{ from_revision }} with {{ to_revision }}]({{ env.GITHUB_SERVER_URL }}/{{ owner }}/{{ repo }}/compare/{{ from_revision }}...{{ to_revision }})
+
+## Changes
+
+{%- for pull_request in pull_requests %}
+* <details><summary>[{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
+{{ pull_request.body }}</summary></details>
+{%- endfor %}

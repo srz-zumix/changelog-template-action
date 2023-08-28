@@ -1,0 +1,40 @@
+name: Extensions-Example
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      from:
+        description: 'git commit revision range start from'
+        required: false
+      to:
+        description: 'git commit revision range end to'
+        default: "G{{ github.sha || '' }}"
+        required: false
+      repo:
+        description: 'git repository path'
+        default: '.'
+        required: false
+
+jobs:
+  extensions-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repo: "${{ inputs.repo || 'srz-zumix/kamidana-action' }}"
+          path: target
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template: testdata/release-note-with-body.md.j2
+          output_file: test.txt
+          path: target
+          from: v0.4.0
+          to: v0.5.0
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog.outputs.text }}
+          EOS
+          diff output.txt test.txt
