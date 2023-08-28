@@ -66,8 +66,8 @@ runs:
       shell: bash
       run: |
         ghch --format=json \
-          --from="${{ steps.resolve-from-to.output.from }}" \
-          --to="${{ steps.resolve-from-to.output.to }}" \
+          --from="${{ steps.resolve-from-to.outputs.from }}" \
+          --to="${{ steps.resolve-from-to.outputs.to }}" \
           --token="${GITHUB_TOKEN}" \
           --repo="${{ inputs.path }}" \
           > "${{ runner.temp }}/ghch-changelog.json"
