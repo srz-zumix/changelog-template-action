@@ -22,13 +22,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
         with:
-          repo: "${{ inputs.repo || 'srz-zumix/kamidana-action' }}"
+          repository: "${{ inputs.repo || 'srz-zumix/kamidana-action' }}"
           path: target
       - name: changelog
         id: changelog
         uses: ./
         with:
-          template: testdata/release-note-with-body.md.j2
+          template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
           path: target
           from: v0.4.0

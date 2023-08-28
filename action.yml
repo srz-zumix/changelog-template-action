@@ -2,15 +2,12 @@ name: 'changelog-template-action'
 description: 'Generate changelogs from templates with reference to git history, tags and merged pull requests'
 author: 'srz_zumix'
 inputs:
-  template:
-    description: 'Jinja2 template file'
+  template_file:
+    description: 'Template file path'
     required: true
   output_file:
     description: 'Output file path'
     required: false
-  template_file:
-    description: 'Template file path'
-    required: true
   from:
     description: 'git commit revision range start from'
     required: false
