@@ -25,6 +25,7 @@ jobs:
           repository: "${{ inputs.repo || 'srz-zumix/gh-activity-report' }}"
           path: target
           fetch-tags: true
+          fetch-depth: 0
       - name: changelog
         id: changelog
         uses: ./
