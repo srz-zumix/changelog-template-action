@@ -1,4 +1,4 @@
-name: Extensions-Example
+name: Test
 on:
   pull_request:
   workflow_dispatch:
@@ -16,7 +16,7 @@ on:
         required: false
 
 jobs:
-  extensions-example:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
