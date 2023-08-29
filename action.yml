@@ -21,6 +21,10 @@ inputs:
   github_token:
     description: 'git repository access token'
     default: "${{ github.token }}"
+  debug:
+    description: 'enable debug'
+    default: false
+    required: false
 
 outputs:
   text:
