@@ -17,12 +17,14 @@ resolve_to() {
         echo "to=${INPUTS_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
-    if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
-        echo "to=${GITHUB_REF}" >> "${GITHUB_OUTPUT}"
-        return
-    fi
-    if [ -n "${GITHUB_REF_NAME}" ]; then
-        echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
+    if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+        if [ -n "${GITHUB_REF_NAME}" ]; then
+            echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
+            return
+        fi
+    else
+        CURRENT_BRANCH=$(git branch --show-current)
+        echo "to=${CURRENT_BRANCH}" >> "${GITHUB_OUTPUT}"
         return
     fi
 

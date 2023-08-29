@@ -64,6 +64,18 @@ jobs:
           fetch-tags: true
           fetch-depth: 0
       - name: changelog
+        id: changelog-self
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: test-self.txt
+          debug: true
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog-self.outputs.text }}
+          EOS
+          diff output.txt test-self.txt
+      - name: changelog
         id: changelog
         uses: ./
         with:
