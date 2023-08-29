@@ -70,7 +70,7 @@ runs:
           > "${{ runner.temp }}/ghch-changelog.json"
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@main
+      uses: srz-zumix/kamidana-action@v0
       with:
         template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"
