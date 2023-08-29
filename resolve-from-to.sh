@@ -43,8 +43,14 @@ resolve_from() {
         PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -2 | tail -1)
     else
         if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
-            if [ -n "${GITHUB_REF_NAME}" ]; then
-                TARGET_COMMITISH="${GITHUB_REF_NAME}"
+            if [ -n "${GITHUB_BASE_REF}" ]; then
+                TARGET_COMMITISH="${GITHUB_BASE_REF}"
+            else
+                if [ -n "${GITHUB_REF_NAME}" ]; then
+                    TARGET_COMMITISH="${GITHUB_REF_NAME}"
+                fi
+            fi
+            if [ -n "${TARGET_COMMITISH}" ]; then
                 PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -1)
             fi
         else
