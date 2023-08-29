@@ -38,6 +38,7 @@ resolve_from() {
         return
     fi
 
+    PREV_RELEASE_TAG_NAME=
     if [ "${GITHUB_EVENT_NAME}" == "release" ]; then
         TARGET_COMMITISH=$(jq -r '.release.target_commitish' < "${GITHUB_EVENT_PATH}")
         PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -2 | tail -1)
