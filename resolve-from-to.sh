@@ -23,6 +23,14 @@ resolve_to() {
         return
     fi
 
+    if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+        if [ -n "${GITHUB_REF_NAME}" ]; then
+            git switch -c "${GITHUB_REF_NAME}" 
+            echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
+            return
+        fi
+    fi
+
     echo "::error:: Failed to get end of changelog range. Specify it explicitly in \"to\" inputs."
     EXIT_CODE=1
 }
