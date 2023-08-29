@@ -35,6 +35,7 @@ jobs:
           path: target
           from: "${{ inputs.repo || 'v0.4.0' }}"
           to: "${{ inputs.repo || 'v0.5.0' }}"
+          debug: true
       - run: |
           cat << EOS | tee output.txt
           ${{ steps.changelog.outputs.text }}
@@ -58,6 +59,7 @@ jobs:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
           path: target
+          debug: true
       - run: |
           cat << EOS | tee output.txt
           ${{ steps.changelog.outputs.text }}
