@@ -4,9 +4,11 @@
 
 {% for pull_request in pull_requests %}
 {%- if 'body' in pull_request -%}
-* <details><summary>[{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
-{{ pull_request.body }}</summary></details>
+<details><summary><a herf="{{ pull_request.html_url }}">{{ pull_request. title }}</a> - {{ pull_request.user.login }} {{ pull_request.merged_at }}</summary>
+
+{{ pull_request.body }}
+</details>
 {%- else %}
-* [{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
+[{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
 {%- endif %}
 {%- endfor %}
