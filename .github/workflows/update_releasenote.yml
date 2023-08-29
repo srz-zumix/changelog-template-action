@@ -1,0 +1,27 @@
+name: UpdateReleaseNotes
+on:
+  release:
+    types:
+      - published
+      - created
+      - edited
+
+permissions:
+  contents: write
+
+jobs:
+  update-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: changelog.md
+      - name: update
+        run: |
+          gh release edit ${{ github.event.release.tag_name}} -F changelog.md
+
+

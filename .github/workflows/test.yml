@@ -1,0 +1,42 @@
+name: Test
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      from:
+        description: 'git commit revision range start from'
+        required: false
+      to:
+        description: 'git commit revision range end to'
+        default: "G{{ github.sha || '' }}"
+        required: false
+      repo:
+        description: 'git repository path'
+        default: '.'
+        required: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: "${{ inputs.repo || 'srz-zumix/gh-activity-report' }}"
+          path: target
+          fetch-tags: true
+          fetch-depth: 0
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: test.txt
+          path: target
+          from: "${{ inputs.repo || 'v0.4.0' }}"
+          to: "${{ inputs.repo || 'v0.5.0' }}"
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog.outputs.text }}
+          EOS
+          diff output.txt test.txt
