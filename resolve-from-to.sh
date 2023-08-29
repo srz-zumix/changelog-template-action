@@ -18,6 +18,10 @@ resolve_to() {
         return
     fi
     if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+        if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
+            echo "to=${GITHUB_HEAD_REF}" >> "${GITHUB_OUTPUT}"
+            return
+        fi
         if [ -n "${GITHUB_REF_NAME}" ]; then
             echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
             return
