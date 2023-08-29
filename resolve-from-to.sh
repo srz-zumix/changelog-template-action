@@ -3,6 +3,11 @@ set -euo pipefail
 
 EXIT_CODE=0
 
+if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
+    KAMIDANA_OPTINOS+=(--debug)
+    set -x
+fi
+
 cd "${INPUTS_PATH}"
 
 TARGET_REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
