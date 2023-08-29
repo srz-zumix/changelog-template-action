@@ -16,8 +16,18 @@ on:
         required: false
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: $github
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "${GITHUB_CONTEXT}"
+
   test:
     runs-on: ubuntu-latest
+    needs: prepare
     steps:
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
@@ -35,6 +45,47 @@ jobs:
           path: target
           from: "${{ inputs.repo || 'v0.4.0' }}"
           to: "${{ inputs.repo || 'v0.5.0' }}"
+          debug: true
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog.outputs.text }}
+          EOS
+          diff output.txt test.txt
+
+  resolve-test:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-tags: true
+          fetch-depth: 0
+      - uses: actions/checkout@v3
+        with:
+          repository: "${{ inputs.repo || 'srz-zumix/gh-activity-report' }}"
+          path: target
+          fetch-tags: true
+          fetch-depth: 0
+      - name: changelog
+        id: changelog-self
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: test-self.txt
+          debug: true
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog-self.outputs.text }}
+          EOS
+          diff output.txt test-self.txt
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: test.txt
+          path: target
+          debug: true
       - run: |
           cat << EOS | tee output.txt
           ${{ steps.changelog.outputs.text }}

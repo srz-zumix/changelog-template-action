@@ -21,6 +21,10 @@ inputs:
   github_token:
     description: 'git repository access token'
     default: "${{ github.token }}"
+  debug:
+    description: 'enable debug'
+    default: false
+    required: false
 
 outputs:
   text:
@@ -55,6 +59,7 @@ runs:
         INPUTS_FROM: "${{ inputs.from }}"
         INPUTS_TO: "${{ inputs.to }}"
         INPUTS_PATH: "${{ inputs.path }}"
+        INPUTS_DEBUG: "${{ inputs.debug }}"
         GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: "${GITHUB_ACTION_PATH}/resolve-from-to.sh"
     - name: create changelog json
