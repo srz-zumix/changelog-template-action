@@ -12,11 +12,12 @@ Generate changelogs from templates with reference to git history, tags and merge
 ## Changes
 
 {% for pull_request in pull_requests %}
-{%- if 'body' in pull_request -%}
-* <details><summary>[{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
-{{ pull_request.body }}</summary></details>
-{%- else %}
 * [{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
+{%- if 'body' in pull_request -%}
+  * <details><summary>details</summary>
+    
+    {{ pull_request.body | indent(4) }}
+    </details>
 {%- endif %}
 {%- endfor %}
 ```
