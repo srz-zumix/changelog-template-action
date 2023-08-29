@@ -17,6 +17,10 @@ resolve_to() {
         echo "to=${INPUTS_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
+    if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
+        echo "to=${GITHUB_REF}" >> "${GITHUB_OUTPUT}"
+        return
+    fi
     if [ -n "${GITHUB_REF_NAME}" ]; then
         echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
         return
