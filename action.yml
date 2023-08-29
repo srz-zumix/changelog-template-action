@@ -68,7 +68,6 @@ runs:
           --token="${GITHUB_TOKEN}" \
           --repo="${{ inputs.path }}" \
           > "${{ runner.temp }}/ghch-changelog.json"
-          cat "${{ runner.temp }}/ghch-changelog.json"
     - name: kamidana
       id: kamidana
       uses: srz-zumix/kamidana-action@main
