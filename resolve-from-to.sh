@@ -42,7 +42,7 @@ resolve_from() {
                 PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == '${TARGET_COMMITISH}') | .tag_name" | head -1)
             fi
         else
-            PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases/latest" --jq ".[].tag_name")
+            PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases/latest" --jq ".tag_name")
         fi
     fi
 
