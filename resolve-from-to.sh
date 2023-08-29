@@ -43,16 +43,12 @@ resolve_from() {
         PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -2 | tail -1)
     else
         if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
-            if [ -n "${GITHUB_BASE_REF}" ]; then
-                TARGET_COMMITISH="${GITHUB_BASE_REF}"
-            else
-                if [ -n "${GITHUB_REF_NAME}" ]; then
-                    TARGET_COMMITISH="${GITHUB_REF_NAME}"
+            TARGET_COMMITISH_LIST=("${GITHUB_BASE_REF}" "refs/heads/${GITHUB_BASE_REF}" "${GITHUB_REF_NAME}" "${GITHUB_REF}")
+            for TARGET_COMMITISH in "${TARGET_COMMITISH_LIST[@]}"; do
+                if [ -n "${TARGET_COMMITISH}" ] && [ -z "${PREV_RELEASE_TAG_NAME}" ]; then
+                    PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -1)
                 fi
-            fi
-            if [ -n "${TARGET_COMMITISH}" ]; then
-                PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | head -1)
-            fi
+            done
         else
             PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases/latest" --jq ".tag_name")
         fi
