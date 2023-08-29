@@ -31,9 +31,13 @@ resolve_from() {
         TARGET_COMMITISH=$(jq -r '.release.target_commitish' < "${GITHUB_EVENT_PATH}")
         PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == '${TARGET_COMMITISH}') | .tag_name" | head -2 | tail -1)
     else
-        if [ -n "${GITHUB_REF_NAME}" ]; then
-            TARGET_COMMITISH="${GITHUB_REF_NAME}"
-            PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == '${TARGET_COMMITISH}') | .tag_name" | head -1)
+        if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+            if [ -n "${GITHUB_REF_NAME}" ]; then
+                TARGET_COMMITISH="${GITHUB_REF_NAME}"
+                PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == '${TARGET_COMMITISH}') | .tag_name" | head -1)
+            fi
+        else
+            PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases/latest" --jq ".[].tag_name")
         fi
     fi
 
