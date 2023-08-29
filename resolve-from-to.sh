@@ -25,7 +25,9 @@ resolve_to() {
 
     if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
         if [ -n "${GITHUB_REF_NAME}" ]; then
-            git switch -c "${GITHUB_REF_NAME}" 
+            if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+                git switch -c "${GITHUB_REF_NAME}"
+            fi
             echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
             return
         fi
