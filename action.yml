@@ -68,13 +68,25 @@ runs:
         GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: |
         "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" > "${{ runner.temp }}/associatedPullRequests.json"
+    - name: create inputs.json
+      shell: bash
+      env:
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
+        INPUTS_CONTEXT: "${{ toJson(inputs) }}"
+      run: |
+        echo "{ \"from_revision\": \"${INPUTS_FROM}\", \"to_revision\": \"${INPUTS_TO}\" }" > "${{ runner.temp }}/revision.json"
+        echo "${INPUTS_CONTEXT}" > "${{ runner.temp }}/inputs.json"
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@v0
+      uses: srz-zumix/kamidana-action@main
       with:
         template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"
-        data_file: "${{ runner.temp }}/associatedPullRequests.json"
+        data_files: |
+          "${{ runner.temp }}/associatedPullRequests.json"
+          "${{ runner.temp }}/revision.json"
+          "${{ runner.temp }}/inputs.json"
         input_format: "json"
         tee: true
         extensions: |
