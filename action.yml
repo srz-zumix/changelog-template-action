@@ -60,8 +60,8 @@ runs:
     - name: create associatedPullRequests.json
       shell: bash
       env:
-        INPUTS_FROM: "${{ inputs.from }}"
-        INPUTS_TO: "${{ inputs.to }}"
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_OWNER: "${{ inputs.owner }}"
         INPUTS_REPO: "${{ inputs.repo }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
