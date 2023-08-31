@@ -8,11 +8,15 @@ on:
         required: false
       to:
         description: 'git commit revision range end to'
-        default: "G{{ github.sha || '' }}"
+        default: "{{ github.sha || '' }}"
+        required: false
+      owner:
+        description: 'git repository owner'
+        default: 'srz_zumix'
         required: false
       repo:
-        description: 'git repository path'
-        default: '.'
+        description: 'git repository name'
+        default: 'changelog-template-action'
         required: false
 
 jobs:
@@ -30,21 +34,16 @@ jobs:
     needs: prepare
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
-        with:
-          repository: "${{ inputs.repo || 'srz-zumix/gh-activity-report' }}"
-          path: target
-          fetch-tags: true
-          fetch-depth: 0
       - name: changelog
         id: changelog
         uses: ./
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
-          path: target
-          from: "${{ inputs.repo || 'v0.4.0' }}"
-          to: "${{ inputs.repo || 'v0.5.0' }}"
+          owner: "${{ inputs.owner || 'srz-zumix' }}"
+          repo: "${{ inputs.repo || 'gh-activity-report' }}"
+          from: "${{ inputs.from || 'v0.4.0' }}"
+          to: "${{ inputs.to || 'v0.5.0' }}"
           debug: true
       - run: |
           cat << EOS | tee output.txt
@@ -57,21 +56,14 @@ jobs:
     needs: prepare
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-tags: true
-          fetch-depth: 0
-      - uses: actions/checkout@v3
-        with:
-          repository: "${{ inputs.repo || 'srz-zumix/gh-activity-report' }}"
-          path: target
-          fetch-tags: true
-          fetch-depth: 0
       - name: changelog
         id: changelog-self
         uses: ./
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test-self.txt
+          owner: srz-zumix
+          repo: changelog-template-action
           debug: true
       - run: |
           cat << EOS | tee output.txt
@@ -84,7 +76,8 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
-          path: target
+          owner: "${{ inputs.owner || 'srz-zumix' }}"
+          repo: "${{ inputs.repo || 'gh-activity-report' }}"
           debug: true
       - run: |
           cat << EOS | tee output.txt
