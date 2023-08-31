@@ -8,26 +8,13 @@ if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
     set -x
 fi
 
-cd "${INPUTS_PATH}"
-
-TARGET_REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
-
 resolve_to() {
     if [ -n "${INPUTS_TO:-}" ]; then
         echo "to=${INPUTS_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
-    CURRENT_BRANCH=$(git branch --show-current)
-    if [ -n "${CURRENT_BRANCH}" ]; then
-        echo "to=${CURRENT_BRANCH}" >> "${GITHUB_OUTPUT}"
-        return
-    fi
-
-    if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+    if [ "${INPUTS_OWNER}/${INPUTS_REPO}" == "${GITHUB_REPOSITORY}" ]; then
         if [ -n "${GITHUB_REF_NAME}" ]; then
-            if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
-                git switch -c "${GITHUB_REF_NAME}"
-            fi
             echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
             return
         fi
