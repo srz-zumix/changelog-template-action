@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_OWNER="${INPUTS_OWNER:-$1}"
-REPO_NAME="${INPUTS_REPO:-$2}"
-COMMIT_FROM="${INPUTS_FROM:-$3}"
-COMMIT_TO=${INPUTS_TO:-$4}
+REPO_OWNER="${INPUTS_OWNER:-${1:-}}"
+REPO_NAME="${INPUTS_REPO:-${2:-}}"
+COMMIT_FROM="${INPUTS_FROM:-${3:-}}"
+COMMIT_TO="${INPUTS_TO:-${4:-}}"
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
     KAMIDANA_OPTINOS+=(--debug)
@@ -17,6 +17,7 @@ COMMIT_COUNT=$(gh api \
   "/repos/${REPO_OWNER}/${REPO_NAME}/compare/${COMMIT_FROM}...${COMMIT_TO}" \
   --jq .total_commits)
 
+# shellcheck disable=SC2016
 gh api graphql -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F to="${COMMIT_TO}" -F count="${COMMIT_COUNT}" -F query='
 query($owner: String!, $repo: String!, $to: String!, $count: Int!) {
   repository(owner: $owner, name: $repo) {
