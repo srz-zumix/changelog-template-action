@@ -76,7 +76,7 @@ runs:
         INPUTS_CONTEXT: "${{ toJson(inputs) }}"
       run: |
         echo "{ \"from_revision\": \"${INPUTS_FROM}\", \"to_revision\": \"${INPUTS_TO}\" }" > "${{ runner.temp }}/revision.json"
-        echo "${INPUTS_CONTEXT}" > "${{ runner.temp }}/inputs.json"
+        echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
     - name: kamidana
       id: kamidana
       uses: srz-zumix/kamidana-action@main
