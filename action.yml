@@ -84,9 +84,9 @@ runs:
         template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"
         data_files: |
-          "${{ runner.temp }}/associatedPullRequests.json"
-          "${{ runner.temp }}/revision.json"
-          "${{ runner.temp }}/inputs.json"
+          ${{ runner.temp }}/associatedPullRequests.json
+          ${{ runner.temp }}/revision.json
+          ${{ runner.temp }}/inputs.json
         input_format: "json"
         tee: true
         extensions: |
