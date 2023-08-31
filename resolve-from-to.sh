@@ -8,12 +8,14 @@ if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
     set -x
 fi
 
+TARGET_REPO="${INPUTS_OWNER}/${INPUTS_REPO}"
+
 resolve_to() {
     if [ -n "${INPUTS_TO:-}" ]; then
         echo "to=${INPUTS_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
-    if [ "${INPUTS_OWNER}/${INPUTS_REPO}" == "${GITHUB_REPOSITORY}" ]; then
+    if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
         if [ -n "${GITHUB_REF_NAME}" ]; then
             echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
             return
