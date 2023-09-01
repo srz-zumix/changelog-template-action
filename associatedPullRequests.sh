@@ -39,6 +39,7 @@ query($owner: String!, $repo: String!, $to: String!, $count: Int!) {
                   }
                   baseRefName
                   body
+                  bodyText
                   closed
                   closedAt
                   createdAt
