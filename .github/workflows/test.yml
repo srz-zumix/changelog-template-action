@@ -19,6 +19,9 @@ on:
         default: 'changelog-template-action'
         required: false
 
+permissions:
+  pull-requests: read
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
