@@ -1,5 +1,13 @@
 name: UpdateReleaseNotes
 on:
+  workflow_dispatch:
+    inputs:
+      from:
+        description: 'git tag from'
+        required: true
+      to:
+        description: 'git tag to'
+        required: true
   release:
     types:
       - published
@@ -31,11 +39,13 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: changelog.md
+          from: "${{ inputs.from || '' }}"
+          to: "${{ inputs.to || '' }}"
           debug: true
       - name: update
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
-          gh release edit ${{ github.event.release.tag_name}} -F changelog.md
+          gh release edit ${{ inputs.to || github.event.release.tag_name }} -F changelog.md
 
 
