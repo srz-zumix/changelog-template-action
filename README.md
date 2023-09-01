@@ -7,13 +7,13 @@ Generate changelogs from templates with reference to git history, tags and merge
 * template file (release-note-with-body.md.j2)
 
 ```markdown
-[Compare {{ from_revision }} with {{ to_revision }}]({{ env('GITHUB_SERVER_URL') }}/{{ owner }}/{{ repo }}/compare/{{ from_revision }}...{{ to_revision }})
+[Compare {{ from_revision }} with {{ to_revision }}]({{ env('GITHUB_SERVER_URL') }}/{{ inputs.owner }}/{{ inputs.repo }}/compare/{{ from_revision }}...{{ to_revision }})
 
 ## Changes
 
 {% for pull_request in pull_requests %}
-* [{{ pull_request. title }}]({{ pull_request.html_url }}) - {{ pull_request.user.login }} {{ pull_request.merged_at }}  
-{%- if 'body' in pull_request -%}
+* [{{ pull_request. title }}]({{ pull_request.url }}) - {{ pull_request.author.login }} {{ pull_request.mergedAt }}  
+{%- if pull_request.body | length > 0 -%}
   * <details><summary>details</summary>
     
     {{ pull_request.body | indent(4) }}
@@ -25,14 +25,14 @@ Generate changelogs from templates with reference to git history, tags and merge
 * workflow
 
 ```yaml
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-tags: true
-          fetch-depth: 0
       - name: changelog
         id: changelog
         uses: srz-zumix/changelog-template-action@main
@@ -41,4 +41,37 @@ jobs:
           output_file: changelog.md
           from: "v1.1.0"
           to: "v1.2.0"
+```
+
+## Example
+
+### Update Release Notes on published
+
+```yaml
+name: UpdateReleaseNotes
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  update-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: changelog
+        id: changelog
+        uses: srz-zumix/changelog-template-action@main
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: changelog.md
+          debug: true
+      - name: update
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          gh release edit ${{ github.event.release.tag_name}} -F changelog.md
 ```

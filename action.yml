@@ -4,10 +4,12 @@ author: 'srz_zumix'
 inputs:
   owner:
     description: 'git repository owner'
-    required: true
+    default: "${{ github.repository_owner }}"
+    required: false
   repo:
     description: 'git repository name'
-    required: true
+    default: "${{ github.event.repository.name }}"
+    required: false
   template_file:
     description: 'Template file path'
     required: true

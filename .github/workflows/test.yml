@@ -66,8 +66,6 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test-self.txt
-          owner: srz-zumix
-          repo: changelog-template-action
           debug: true
       - run: |
           cat << EOS | tee output.txt
