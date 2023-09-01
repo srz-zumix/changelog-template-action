@@ -26,6 +26,8 @@ resolve_to() {
         fi
     else
         DEFAULT_BRANCH=$(gh repo view "${TARGET_REPO}" --json defaultBranchRef --jq .defaultBranchRef.name)
+        echo "to=${DEFAULT_BRANCH}" >> "${GITHUB_OUTPUT}"
+        return
     fi
 
     echo "::error:: Failed to get end of changelog range. Specify it explicitly in \"to\" inputs."
