@@ -2,6 +2,12 @@ name: 'changelog-template-action'
 description: 'Generate changelogs from templates with reference to git history, tags and merged pull requests'
 author: 'srz_zumix'
 inputs:
+  owner:
+    description: 'git repository owner'
+    required: true
+  repo:
+    description: 'git repository name'
+    required: true
   template_file:
     description: 'Template file path'
     required: true
@@ -13,10 +19,6 @@ inputs:
     required: false
   to:
     description: 'git commit revision range end to'
-    required: false
-  path:
-    description: 'git repository path'
-    default: '.'
     required: false
   github_token:
     description: 'git repository access token'
@@ -44,42 +46,47 @@ runs:
       shell: bash
       run: |
         pip install jinja2-cli
-    - name: setup-go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '>=1.8.5'
-    - name: install ghch
-      shell: bash
-      run: |
-        go install github.com/Songmu/ghch/cmd/ghch@latest
     - name: resolve from-to
       id: resolve-from-to
       shell: bash
       env:
         INPUTS_FROM: "${{ inputs.from }}"
         INPUTS_TO: "${{ inputs.to }}"
-        INPUTS_PATH: "${{ inputs.path }}"
+        INPUTS_OWNER: "${{ inputs.owner }}"
+        INPUTS_REPO: "${{ inputs.repo }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
         GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: "${GITHUB_ACTION_PATH}/resolve-from-to.sh"
-    - name: create changelog json
-      env:
-        GITHUB_TOKEN: "${{ inputs.github_token }}"
+    - name: create associatedPullRequests.json
       shell: bash
+      env:
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
+        INPUTS_OWNER: "${{ inputs.owner }}"
+        INPUTS_REPO: "${{ inputs.repo }}"
+        INPUTS_DEBUG: "${{ inputs.debug }}"
+        GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: |
-        ghch --format=json \
-          --from="${{ steps.resolve-from-to.outputs.from }}" \
-          --to="${{ steps.resolve-from-to.outputs.to }}" \
-          --token="${GITHUB_TOKEN}" \
-          --repo="${{ inputs.path }}" \
-          > "${{ runner.temp }}/ghch-changelog.json"
+        "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" > "${{ runner.temp }}/associatedPullRequests.json"
+    - name: create inputs.json
+      shell: bash
+      env:
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
+        INPUTS_CONTEXT: "${{ toJson(inputs) }}"
+      run: |
+        echo "{ \"from_revision\": \"${INPUTS_FROM}\", \"to_revision\": \"${INPUTS_TO}\" }" > "${{ runner.temp }}/revision.json"
+        echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@v0
+      uses: srz-zumix/kamidana-action@main
       with:
         template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"
-        data_file: "${{ runner.temp }}/ghch-changelog.json"
+        data_files: |
+          ${{ runner.temp }}/associatedPullRequests.json
+          ${{ runner.temp }}/revision.json
+          ${{ runner.temp }}/inputs.json
         input_format: "json"
         tee: true
         extensions: |
