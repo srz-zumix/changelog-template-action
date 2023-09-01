@@ -20,7 +20,8 @@ on:
         required: false
 
 permissions:
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 jobs:
   prepare:
