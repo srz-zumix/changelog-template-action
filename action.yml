@@ -22,6 +22,9 @@ inputs:
   to:
     description: 'git commit revision range end to'
     required: false
+  kamidana_additionals:
+    description: 'kamidana additionals modules'
+    required: false
   github_token:
     description: 'git repository access token'
     default: "${{ github.token }}"
@@ -91,6 +94,7 @@ runs:
           ${{ runner.temp }}/inputs.json
         input_format: "json"
         tee: true
+        additonals: "${{ inputs.kamidana_additionals }}"
         extensions: |
           i18n
           do

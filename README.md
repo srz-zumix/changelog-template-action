@@ -68,7 +68,6 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: changelog.md
-          debug: true
       - name: update
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
