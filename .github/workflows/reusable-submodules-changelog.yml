@@ -112,7 +112,9 @@ jobs:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
     needs: parent-changelog
     strategy:
-      matrix: "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
+      matrix:
+        include:
+          "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
     steps:
       - uses: actions/checkout@v3
       - name: Get parent changelog
