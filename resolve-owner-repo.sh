@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
