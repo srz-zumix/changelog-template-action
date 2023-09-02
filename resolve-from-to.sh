@@ -47,7 +47,7 @@ resolve_from() {
 
     PREV_RELEASE_TAG_NAME=
     if [ -n "${TO_TARGET_COMMITISH}" ]; then
-        PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TARGET_COMMITISH}\") | .tag_name" | grep -A 1  "${INPUTS_TO}" | tail -1 || :)
+        PREV_RELEASE_TAG_NAME=$(gh api "/repos/${TARGET_REPO}/releases" --jq ".[] | select(.target_commitish == \"${TO_TARGET_COMMITISH}\") | .tag_name" | grep -A 1  "${INPUTS_TO}" | tail -1 || :)
     else
         # get latest
         if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
