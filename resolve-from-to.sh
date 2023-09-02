@@ -9,24 +9,28 @@ if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
 fi
 
 TARGET_REPO="${INPUTS_OWNER}/${INPUTS_REPO}"
+RESOLVE_TO="${INPUTS_TO:-}"
+RESOLVE_FROM="${INPUTS_FROM:-}"
 
 resolve_to() {
-    if [ -n "${INPUTS_TO:-}" ]; then
-        echo "to=${INPUTS_TO}" >> "${GITHUB_OUTPUT}"
+    if [ -n "${RESOLVE_TO:-}" ]; then
+        echo "to=${RESOLVE_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
     if [ "${TARGET_REPO}" == "${GITHUB_REPOSITORY}" ]; then
         if [ -n "${GITHUB_HEAD_REF}" ]; then
-            echo "to=${GITHUB_HEAD_REF}" >> "${GITHUB_OUTPUT}"
+            RESOLVE_TO="${GITHUB_HEAD_REF}"
+            echo "to=${RESOLVE_TO}" >> "${GITHUB_OUTPUT}"
             return
         fi
         if [ -n "${GITHUB_REF_NAME}" ]; then
-            echo "to=${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
+            RESOLVE_TO="${GITHUB_REF_NAME}"
+            echo "to=${RESOLVE_TO}" >> "${GITHUB_OUTPUT}"
             return
         fi
     else
-        DEFAULT_BRANCH=$(gh repo view "${TARGET_REPO}" --json defaultBranchRef --jq .defaultBranchRef.name)
-        echo "to=${DEFAULT_BRANCH}" >> "${GITHUB_OUTPUT}"
+        RESOLVE_TO=$(gh repo view "${TARGET_REPO}" --json defaultBranchRef --jq .defaultBranchRef.name)
+        echo "to=${RESOLVE_TO}" >> "${GITHUB_OUTPUT}"
         return
     fi
 
@@ -35,14 +39,14 @@ resolve_to() {
 }
 
 resolve_from() {
-    if [ -n "${INPUTS_FROM:-}" ]; then
-        echo "from=${INPUTS_FROM}" >> "${GITHUB_OUTPUT}"
+    if [ -n "${RESOLVE_FROM:-}" ]; then
+        echo "from=${RESOLVE_FROM}" >> "${GITHUB_OUTPUT}"
         return
     fi
 
     TO_TARGET_COMMITISH=
-    if [ -n "${INPUTS_TO:-}" ]; then
-        TO_TARGET_COMMITISH=$(gh api "/repos/${TARGET_REPO}/releases/tags/${INPUTS_TO}" --jq ".target_commitish" || :)
+    if [ -n "${RESOLVE_TO:-}" ]; then
+        TO_TARGET_COMMITISH=$( (gh api "/repos/${TARGET_REPO}/releases/tags/${RESOLVE_TO}" 2>/dev/null || :) | jq -r '.target_commitish // empty')
     fi
 
     PREV_RELEASE_TAG_NAME=
@@ -63,6 +67,7 @@ resolve_from() {
     fi
 
     if [ -n "${PREV_RELEASE_TAG_NAME}" ]; then
+        RESOLVE_FROM="${PREV_RELEASE_TAG_NAME}"
         echo "from=${PREV_RELEASE_TAG_NAME}" >> "${GITHUB_OUTPUT}"
         return
     fi
