@@ -2,12 +2,12 @@ name: UpdateReleaseNotes
 on:
   workflow_dispatch:
     inputs:
-      from:
-        description: 'git tag from'
-        required: true
       to:
         description: 'git tag to'
         required: true
+      from:
+        description: 'git tag from'
+        required: false
   release:
     types:
       - published
