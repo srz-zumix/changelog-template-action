@@ -12,7 +12,7 @@ on:
         required: false
       owner:
         description: 'git repository owner'
-        default: 'srz_zumix'
+        default: 'srz-zumix'
         required: false
       repo:
         description: 'git repository name'
