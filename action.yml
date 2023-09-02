@@ -37,6 +37,12 @@ outputs:
   text:
     description: "jinja2 output text"
     value: ${{ steps.kamidana.outputs.text }}
+  from:
+    description: "resolved from"
+    value: ${{ steps.resolve-from-to.outputs.from }}
+  to:
+    description: "resolved to"
+    value: ${{ steps.resolve-from-to.outputs.to }}
 
 runs:
   using: "composite"
