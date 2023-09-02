@@ -79,7 +79,7 @@ jobs:
             -F repo="${INPUTS_REPO}" \
             -F from="${INPUTS_FROM}" \
             -F to="${INPUTS_TO}" \
-            -F query='{
+            -F query='
               query($owner: String!, $repo: String!, $from: String!, $to: String!) {
                 repository(owner: $owner, name: $repo) {
                   to: object(expression: $to) {
