@@ -46,7 +46,7 @@ resolve_from() {
 
     TO_TARGET_COMMITISH=
     if [ -n "${RESOLVE_TO:-}" ]; then
-        TO_TARGET_COMMITISH=$((gh api "/repos/${TARGET_REPO}/releases/tags/${RESOLVE_TO}" 2>/dev/null || :) | jq -r '.target_commitish // empty')
+        TO_TARGET_COMMITISH=$( (gh api "/repos/${TARGET_REPO}/releases/tags/${RESOLVE_TO}" 2>/dev/null || :) | jq -r '.target_commitish // empty')
     fi
 
     PREV_RELEASE_TAG_NAME=
