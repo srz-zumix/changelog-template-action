@@ -112,6 +112,7 @@ jobs:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
     needs: parent-changelog
     strategy:
+      fail-fast: false
       matrix:
         include:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
