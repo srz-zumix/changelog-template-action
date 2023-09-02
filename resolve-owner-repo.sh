@@ -1,4 +1,4 @@
-ifset -euo pipefail
+set -euo pipefail
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
     KAMIDANA_OPTINOS+=(--debug)
@@ -19,5 +19,5 @@ fi
 if [ -n "${INPUTS_REPO:-}" ]; then
     echo "repo=${INPUTS_REPO}" >> "${GITHUB_OUTPUT}"
 else
-    echo "repo=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> "${GITHUB_OUTPUT}"
+    echo "repo=${GITHUB_REPOSITORY#"${GITHUB_REPOSITORY_OWNER}"/}" >> "${GITHUB_OUTPUT}"
 fi

@@ -69,6 +69,7 @@ jobs:
           INPUTS_OWNER: "${{ steps.changelog.outputs.owner }}"
           INPUTS_REPO: "${{ steps.changelog.outputs.repo }}"
         run: |
+          # shellcheck disable=SC2016
           gh api graphql \
             -F owner="${INPUTS_OWNER}" \
             -F repo="${INPUTS_REPO}" \
