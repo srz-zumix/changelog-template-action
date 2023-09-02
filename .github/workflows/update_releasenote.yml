@@ -41,6 +41,7 @@ jobs:
           output_file: changelog.md
           from: "${{ inputs.from || '' }}"
           to: "${{ inputs.to || '' }}"
+          tee: true
           debug: true
       - name: update
         env:

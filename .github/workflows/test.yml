@@ -48,6 +48,7 @@ jobs:
           repo: "${{ inputs.repo || 'gh-activity-report' }}"
           from: "${{ inputs.from || 'v0.4.0' }}"
           to: "${{ inputs.to || 'v0.5.0' }}"
+          tee: true
           debug: true
       - run: |
           cat << EOS | tee output.txt
@@ -68,6 +69,7 @@ jobs:
           output_file: test.txt
           owner: "${{ inputs.owner || 'srz-zumix' }}"
           repo: "${{ inputs.repo || 'gh-activity-report' }}"
+          tee: true
           debug: true
       - run: |
           cat << EOS | tee output.txt

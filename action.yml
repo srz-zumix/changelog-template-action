@@ -28,6 +28,10 @@ inputs:
   github_token:
     description: 'git repository access token'
     default: "${{ github.token }}"
+  tee:
+    description: 'tee gh / kamidana output'
+    default: false
+    required: false
   debug:
     description: 'enable debug'
     default: false
@@ -75,10 +79,15 @@ runs:
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_OWNER: "${{ inputs.owner }}"
         INPUTS_REPO: "${{ inputs.repo }}"
+        INPUTS_TEE: "${{ inputs.tee }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
         GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: |
-        "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" > "${{ runner.temp }}/associatedPullRequests.json"
+        if [ "${INPUTS_TEE}" == 'true' ]; then
+          "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" | tee "${{ runner.temp }}/associatedPullRequests.json"
+        else
+          "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" > "${{ runner.temp }}/associatedPullRequests.json"
+        fi
     - name: create inputs.json
       shell: bash
       env:
@@ -99,7 +108,7 @@ runs:
           ${{ runner.temp }}/revision.json
           ${{ runner.temp }}/inputs.json
         input_format: "json"
-        tee: true
+        tee: "${{ inputs.tee }}"
         additonals: "${{ inputs.kamidana_additionals }}"
         extensions: |
           i18n
