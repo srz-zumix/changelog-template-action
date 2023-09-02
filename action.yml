@@ -74,7 +74,7 @@ runs:
       shell: bash
       env:
         INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
-        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.reop }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ inputs.from }}"
         INPUTS_TO: "${{ inputs.to }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
@@ -84,7 +84,7 @@ runs:
       shell: bash
       env:
         INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
-        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.reop }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_TEE: "${{ inputs.tee }}"
@@ -100,7 +100,7 @@ runs:
       shell: bash
       env:
         INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
-        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.reop }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_CONTEXT: "${{ toJson(inputs) }}"
