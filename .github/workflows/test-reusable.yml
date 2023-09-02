@@ -1,0 +1,37 @@
+name: TestReusable
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      from:
+        description: 'git commit revision range start from'
+        required: false
+      to:
+        description: 'git commit revision range end to'
+        default: "{{ github.sha || '' }}"
+        required: false
+      owner:
+        description: 'git repository owner'
+        default: 'srz_zumix'
+        required: false
+      repo:
+        description: 'git repository name'
+        default: 'changelog-template-action'
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test-reusable:
+    uses: srz-zumix/changelog-template-action/.github/workflows/reusable-submodules-changelog.yml@main
+    with:
+      template_file: testdata/release-note-with-body.md.j2
+      owner: "${{ inputs.owner || 'srz-zumix' }}"
+      repo: "${{ inputs.repo || 'ci-specs' }}"
+      from: "${{ inputs.from || '757727599398a020651f59254e7496283d372173' }}"
+      to: "${{ inputs.to || 'b5782867c3424f7ac4fc0469833536000e2e88fa' }}"

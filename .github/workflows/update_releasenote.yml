@@ -18,6 +18,9 @@ permissions:
   contents: write
   pull-requests: read
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -44,8 +47,6 @@ jobs:
           tee: true
           debug: true
       - name: update
-        env:
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           gh release edit ${{ inputs.to || github.event.release.tag_name }} -F changelog.md
 

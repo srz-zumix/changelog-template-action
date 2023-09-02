@@ -10,6 +10,9 @@ inputs:
     description: 'git repository name'
     default: "${{ github.event.repository.name }}"
     required: false
+  git_url:
+    description: 'git repository url (owner/repo inputs are ignored)'
+    required: false
   template_file:
     description: 'Template file path'
     required: true
@@ -25,9 +28,6 @@ inputs:
   kamidana_additionals:
     description: 'kamidana additionals modules'
     required: false
-  github_token:
-    description: 'git repository access token'
-    default: "${{ github.token }}"
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -41,6 +41,12 @@ outputs:
   text:
     description: "jinja2 output text"
     value: ${{ steps.kamidana.outputs.text }}
+  owner:
+    description: "resolved owner"
+    value: ${{ steps.resolve-owner-repo.outputs.owner }}
+  repo:
+    description: "resolved repo"
+    value: ${{ steps.resolve-owner-repo.outputs.repo }}
   from:
     description: "resolved from"
     value: ${{ steps.resolve-from-to.outputs.from }}
@@ -51,37 +57,34 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: setup-python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION || '3.10' }}
-        # cache: 'pip'
-        # cache-dependency-path: ${{ github.action_path  }}/requirements.txt
-    - name: pip install
+    - name: resolve owner/repo
+      id: resolve-owner-repo
       shell: bash
-      run: |
-        pip install jinja2-cli
+      env:
+        INPUTS_OWNER: "${{ inputs.owner }}"
+        INPUTS_REPO: "${{ inputs.repo }}"
+        INPUTS_GIT_URL: "${{ inputs.git_url }}"
+        INPUTS_DEBUG: "${{ inputs.debug }}"
+      run: "${GITHUB_ACTION_PATH}/resolve-owner-repo.sh"
     - name: resolve from-to
       id: resolve-from-to
       shell: bash
       env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ inputs.from }}"
         INPUTS_TO: "${{ inputs.to }}"
-        INPUTS_OWNER: "${{ inputs.owner }}"
-        INPUTS_REPO: "${{ inputs.repo }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
-        GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: "${GITHUB_ACTION_PATH}/resolve-from-to.sh"
     - name: create associatedPullRequests.json
       shell: bash
       env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
-        INPUTS_OWNER: "${{ inputs.owner }}"
-        INPUTS_REPO: "${{ inputs.repo }}"
         INPUTS_TEE: "${{ inputs.tee }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
-        GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: |
         if [ "${INPUTS_TEE}" == 'true' ]; then
           "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" | tee "${{ runner.temp }}/associatedPullRequests.json"
@@ -91,11 +94,20 @@ runs:
     - name: create inputs.json
       shell: bash
       env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_CONTEXT: "${{ toJson(inputs) }}"
       run: |
-        echo "{ \"from_revision\": \"${INPUTS_FROM}\", \"to_revision\": \"${INPUTS_TO}\" }" > "${{ runner.temp }}/revision.json"
+        {
+          echo "{"
+          echo "  \"owner\": \"${INPUTS_OWNER}\","
+          echo "  \"repo\": \"${INPUTS_REPO}\","
+          echo "  \"from_revision\": \"${INPUTS_FROM}\","
+          echo "  \"to_revision\": \"${INPUTS_TO}\""
+          echo "}"
+        } > "${{ runner.temp }}/revision.json"
         echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
     - name: kamidana
       id: kamidana
