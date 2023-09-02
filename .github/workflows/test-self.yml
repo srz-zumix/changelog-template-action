@@ -1,4 +1,4 @@
-name: Test
+name: TestSelf
 on:
   pull_request:
   workflow_dispatch:
@@ -9,14 +9,6 @@ on:
       to:
         description: 'git commit revision range end to'
         default: "{{ github.sha || '' }}"
-        required: false
-      owner:
-        description: 'git repository owner'
-        default: 'srz_zumix'
-        required: false
-      repo:
-        description: 'git repository name'
-        default: 'changelog-template-action'
         required: false
 
 permissions:
@@ -44,10 +36,8 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
-          owner: "${{ inputs.owner || 'srz-zumix' }}"
-          repo: "${{ inputs.repo || 'gh-activity-report' }}"
-          from: "${{ inputs.from || 'v0.4.0' }}"
-          to: "${{ inputs.to || 'v0.5.0' }}"
+          from: "${{ inputs.from || 'v0.2.0' }}"
+          to: "${{ inputs.to || 'v0.3.0' }}"
           debug: true
       - run: |
           cat << EOS | tee output.txt
@@ -55,7 +45,7 @@ jobs:
           EOS
           diff output.txt test.txt
 
-  resolve-test:
+  resolve-from-to-test:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
@@ -66,8 +56,25 @@ jobs:
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
-          owner: "${{ inputs.owner || 'srz-zumix' }}"
-          repo: "${{ inputs.repo || 'gh-activity-report' }}"
+          debug: true
+      - run: |
+          cat << EOS | tee output.txt
+          ${{ steps.changelog.outputs.text }}
+          EOS
+          diff output.txt test.txt
+
+  resolve-to-test:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - uses: actions/checkout@v3
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template_file: testdata/release-note-with-body.md.j2
+          output_file: test.txt
+          to: "${{ inputs.to || 'v0.3.0' }}"
           debug: true
       - run: |
           cat << EOS | tee output.txt

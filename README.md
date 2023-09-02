@@ -14,7 +14,7 @@ Generate changelogs from templates with reference to git history, tags and merge
 {% for pull_request in pull_requests %}
 * [{{ pull_request. title }}]({{ pull_request.url }}) - {{ pull_request.author.login }} {{ pull_request.mergedAt }}  
 {%- if pull_request.body | length > 0 -%}
-  * <details><summary>details</summary>
+    <details><summary>details</summary>
     
     {{ pull_request.body | indent(4) }}
     </details>
