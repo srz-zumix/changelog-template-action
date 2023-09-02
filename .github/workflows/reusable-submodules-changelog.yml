@@ -39,6 +39,7 @@ jobs:
     outputs:
       submodules: ${{ steps.submodules.outputs.submodules }}
     steps:
+      - uses: actions/checkout@v3
       - name: Get parent changelog
         uses: srz-zumix/changelog-template-action@main
         id: changelog
@@ -110,6 +111,7 @@ jobs:
     strategy:
       matrix: "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
     steps:
+      - uses: actions/checkout@v3
       - name: Get parent changelog
         id: changelog
         uses: srz-zumix/changelog-template-action@main
