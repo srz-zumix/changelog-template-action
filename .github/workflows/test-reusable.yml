@@ -5,10 +5,11 @@ on:
     inputs:
       from:
         description: 'git commit revision range start from'
+        default: "757727599398a020651f59254e7496283d372173"
         required: false
       to:
         description: 'git commit revision range end to'
-        default: "{{ github.sha || '' }}"
+        default: "b5782867c3424f7ac4fc0469833536000e2e88fa"
         required: false
       owner:
         description: 'git repository owner'
@@ -16,7 +17,7 @@ on:
         required: false
       repo:
         description: 'git repository name'
-        default: 'changelog-template-action'
+        default: 'ci-specs'
         required: false
 
 permissions:
