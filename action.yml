@@ -28,9 +28,6 @@ inputs:
   kamidana_additionals:
     description: 'kamidana additionals modules'
     required: false
-  github_token:
-    description: 'git repository access token'
-    default: "${{ github.token }}"
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -78,7 +75,6 @@ runs:
         INPUTS_FROM: "${{ inputs.from }}"
         INPUTS_TO: "${{ inputs.to }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
-        GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: "${GITHUB_ACTION_PATH}/resolve-from-to.sh"
     - name: create associatedPullRequests.json
       shell: bash
@@ -89,7 +85,6 @@ runs:
         INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
         INPUTS_TEE: "${{ inputs.tee }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
-        GITHUB_TOKEN: "${{ inputs.github_token }}"
       run: |
         if [ "${INPUTS_TEE}" == 'true' ]; then
           "${GITHUB_ACTION_PATH}/associatedPullRequests.sh" | tee "${{ runner.temp }}/associatedPullRequests.json"

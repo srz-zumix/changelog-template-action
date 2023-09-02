@@ -58,6 +58,9 @@ permissions:
   contents: write
   pull-requests: read
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   update-release-notes:
     runs-on: ubuntu-latest
@@ -69,8 +72,6 @@ jobs:
           template_file: testdata/release-note-with-body.md.j2
           output_file: changelog.md
       - name: update
-        env:
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           gh release edit ${{ github.event.release.tag_name}} -F changelog.md
 ```
