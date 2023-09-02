@@ -1,0 +1,130 @@
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: 'runner labels json string'
+        default: '[ "ubuntu-latest" ]'
+        required: false
+        type: string
+      template_file:
+        description: 'Template file path'
+        required: true
+        type: string
+      owner:
+        description: 'git repository owner'
+        default: "${{ github.repository_owner }}"
+        required: false
+        type: string
+      repo:
+        description: 'git repository name'
+        default: "${{ github.event.repository.name }}"
+        required: false
+        type: string
+      git_url:
+        description: 'git repository url (owner/repo inputs are ignored)'
+        required: false
+        type: string
+      from:
+        description: 'git commit revision range start from'
+        required: true
+        type: string
+      to:
+        description: 'git commit revision range end to'
+        required: true
+        type: string
+
+jobs:
+  parent-changelog:
+    runs-on: "${{ fromJSON(inputs.runs-on) }}"
+    outputs:
+      submodules: ${{ steps.submodules.outputs.submodules }}
+    steps:
+      - name: Get parent changelog
+        uses: srz-zumix/changelog-template-action@main
+        id: changelog
+        with:
+          template_file: "${{ inputs.template_file }}"
+          owner: "${{ inputs.owner }}"
+          repo: "${{ inputs.repo }}"
+          git_url: "${{ inputs.git_url }}"
+          from: "${{ inputs.from }}"
+          to: "${{ inputs.to }}"
+      - name: Save to file
+        shell: bash
+        run: |
+          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
+          ${{ steps.changelog.outputs.text }}
+          EOS
+      - name: Upload changelog
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
+          if-no-files-found: error
+      - name: Get submodules form/to
+        shell: bash
+        id: submodules
+        env:
+          INPUTS_FROM: "${{ inputs.from }}"
+          INPUTS_TO: "${{ inputs.to }}"
+          INPUTS_OWNER: "${{ steps.changelog.outputs.owner }}"
+          INPUTS_REPO: "${{ steps.changelog.outputs.repo }}"
+        run: |
+          gh api graphql \
+            -F owner="${INPUTS_OWNER}" \
+            -F repo="${INPUTS_REPO}" \
+            -F from="${INPUTS_FROM}" \
+            -F to="${INPUTS_TO}" \
+            -F query='{
+              query($owner: String!, $repo: String!, $from: String!, $to: String!) {
+                repository(owner: $owner, name: $repo) {
+                  to: object(expression: $to) {
+                    ... Submodules
+                  }
+                  from: object(expression: $from) {
+                    ... Submodules
+                  }
+              }
+            }
+            fragment Submodules on Commit {
+              submodules(first: 100) {
+                nodes {
+                  name
+                  gitUrl
+                  subprojectCommitOid
+                }
+              }
+            }
+          ' --jq '
+          (.data.repository.to.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, to : .subprojectCommitOid } }] | from_entries),
+          (.data.repository.from.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, from : .subprojectCommitOid } }] | from_entries)
+          ' \
+          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value]' > submodules.json
+          SUBMODULES=$(jq -c < submodules.json)
+          echo "submodules=${SUBMODULES}" >> "${GITHUB_OUTPUT}"
+
+
+  submodules-changelog:
+    runs-on: "${{ fromJSON(inputs.runs-on) }}"
+    needs: parent-changelog
+    strategy:
+      matrix: "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
+    steps:
+      - name: Get parent changelog
+        id: changelog
+        uses: srz-zumix/changelog-template-action@main
+        with:
+          template_file: "${{ inputs.template_file }}"
+          git_url: "${{ matrix.gitUrl }}"
+          from: "${{ matrix.from }}"
+          to: "${{ matrix.to }}"
+      - name: Save to file
+        shell: bash
+        run: |
+          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
+          ${{ steps.changelog.outputs.text }}
+          EOS
+      - name: Upload changelog
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
+          if-no-files-found: error
