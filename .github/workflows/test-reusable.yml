@@ -28,7 +28,7 @@ env:
 
 jobs:
   test-reusable:
-    uses: srz-zumix/changelog-template-action/.github/workflows/reusable-submodules-changelog.yml@feature/reusable-workflow
+    uses: srz-zumix/changelog-template-action/.github/workflows/reusable-submodules-changelog.yml@main
     with:
       template_file: testdata/release-note-with-body.md.j2
       owner: "${{ inputs.owner || 'srz-zumix' }}"
