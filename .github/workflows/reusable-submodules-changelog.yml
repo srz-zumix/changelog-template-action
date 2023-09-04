@@ -122,7 +122,7 @@ jobs:
       matrix:
         include:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
-    name: ${{ github.workflow }}/${{ github.job }} - ${{ matrix.name }}
+    name: submodules-changelog - ${{ matrix.name }}
     steps:
       - name: $github
         env:
