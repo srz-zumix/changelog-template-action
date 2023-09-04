@@ -45,7 +45,6 @@ jobs:
       - name: $github
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-          JOB_CONTEXT: ${{ toJson(job) }}
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
@@ -123,12 +122,11 @@ jobs:
       matrix:
         include:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
-    name: ${{ matrix.name }}
+    name: ${{ github.workflow }}/${{ github.job }} - ${{ matrix.name }}
     steps:
       - name: $github
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-          JOB_CONTEXT: ${{ toJson(job) }}
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
