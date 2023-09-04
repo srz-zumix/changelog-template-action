@@ -103,7 +103,7 @@ jobs:
           (.data.repository.to.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, to : .subprojectCommitOid } }] | from_entries),
           (.data.repository.from.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, from : .subprojectCommitOid } }] | from_entries)
           ' \
-          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value]' > submodules.json
+          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value] | map(select(.from != null and .to != null))' > submodules.json
           SUBMODULES=$(jq -c < submodules.json)
           echo "submodules=${SUBMODULES}" >> "${GITHUB_OUTPUT}"
 
