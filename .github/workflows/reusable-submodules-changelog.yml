@@ -33,9 +33,6 @@ on:
         required: true
         type: string
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   parent-changelog:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
