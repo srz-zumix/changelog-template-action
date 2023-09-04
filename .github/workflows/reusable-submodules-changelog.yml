@@ -45,6 +45,7 @@ jobs:
       - name: $github
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
+          JOB_CONTEXT: ${{ toJson(job) }}
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
@@ -127,6 +128,7 @@ jobs:
       - name: $github
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
+          JOB_CONTEXT: ${{ toJson(job) }}
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
