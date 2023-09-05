@@ -33,6 +33,16 @@ on:
         required: true
         type: string
 
+    secrets:
+      GH_TOKEN:
+        required: false
+      GH_ENTERPRISE_TOKEN:
+        required: false
+
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_ENTERPRISE_TOKEN: ${{ secrets.GH_ENTERPRISE_TOKEN }}
+
 jobs:
   parent-changelog:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
@@ -106,7 +116,7 @@ jobs:
           (.data.repository.to.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, to : .subprojectCommitOid } }] | from_entries),
           (.data.repository.from.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, from : .subprojectCommitOid } }] | from_entries)
           ' \
-          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value] | map(select(.from != null and .to != null))' > submodules.json
+          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value] | map(select(.from != null and .to != null and .from != .to))' > submodules.json
           SUBMODULES=$(jq -c < submodules.json)
           echo "submodules=${SUBMODULES}" >> "${GITHUB_OUTPUT}"
 
@@ -114,6 +124,7 @@ jobs:
   submodules-changelog:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
     needs: parent-changelog
+    if: fromJson(needs.parent-changelog.outputs.submodules)[0] != null
     strategy:
       fail-fast: false
       matrix:

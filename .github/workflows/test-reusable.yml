@@ -36,3 +36,5 @@ jobs:
       repo: "${{ inputs.repo || 'ci-specs' }}"
       from: "${{ inputs.from || '757727599398a020651f59254e7496283d372173' }}"
       to: "${{ inputs.to || 'b5782867c3424f7ac4fc0469833536000e2e88fa' }}"
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
