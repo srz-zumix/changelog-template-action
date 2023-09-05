@@ -33,6 +33,16 @@ on:
         required: true
         type: string
 
+    secrets:
+      GH_TOKEN:
+        required: false
+      GH_ENTERPRISE_TOKEN:
+        required: false
+
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_ENTERPRISE_TOKEN: ${{ secrets.GH_ENTERPRISE_TOKEN }}
+
 jobs:
   parent-changelog:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
