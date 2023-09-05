@@ -92,9 +92,9 @@ jobs:
           template_file: testdata/release-note-with-body.md.j2
           output_file: test.txt
           owner: srz-zumix
-          repo: iutest
-          from: v1.6.0
-          to: v1.17.0
+          repo: wandbox-api
+          from: v0.9.6
+          to: v0.10.0
           tee: true
           debug: true
       - run: |

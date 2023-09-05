@@ -12,20 +12,37 @@ if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
 fi
 
 COMMIT_COUNT=$(gh api \
-  -H "Accept: application/vnd.github+json" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
   "/repos/${REPO_OWNER}/${REPO_NAME}/compare/${COMMIT_FROM}...${COMMIT_TO}" \
   --jq .total_commits)
 
+TO_OID=$(gh api graphql -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F sha="${COMMIT_TO}" -F query='
+query($owner: String!, $repo: String!, $sha: String!) {
+  repository(owner: $owner, name: $repo) {
+    object(expression: $sha) {
+      ... on Commit {
+        oid
+      }
+    }
+  }
+}
+' --jq '.data.repository.object.oid')
+
+START_CURSOR="${TO_OID} ${COMMIT_COUNT}"
+
+# Note
+# gh api --paginate detect endCursor, using a trick to make endCursor an alias for startCursor
 # shellcheck disable=SC2016
-gh api graphql -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F to="${COMMIT_TO}" -F count="${COMMIT_COUNT}" -F query='
-query($owner: String!, $repo: String!, $to: String!, $count: Int!) {
+gh api graphql --paginate -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F to="${COMMIT_TO}" -F endCursor="${START_CURSOR}" -F query='
+query($owner: String!, $repo: String!, $to: String!, $endCursor: String) {
   repository(owner: $owner, name: $repo) {
     object(expression: $to) {
       ... on Commit {
-        history(first: $count) {
+        history(last: 100, before: $endCursor) {
+          pageInfo {
+            endCursor: startCursor
+            hasNextPage
+          }
           nodes {
-            message
             associatedPullRequests(first: 1) {
               edges {
                 node {
@@ -95,4 +112,4 @@ fragment Account on User {
   login
   name
 } 
-' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | { pull_requests: . }'
+' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | reverse | { pull_requests: . }'
