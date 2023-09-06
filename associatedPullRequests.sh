@@ -7,7 +7,6 @@ COMMIT_FROM="${INPUTS_FROM:-${3:-}}"
 COMMIT_TO="${INPUTS_TO:-${4:-}}"
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
-    KAMIDANA_OPTINOS+=(--debug)
     set -x
 fi
 
@@ -29,16 +28,17 @@ query($owner: String!, $repo: String!, $sha: String!) {
 ' --jq '.data.repository.object.oid')
 
 START_CURSOR="${TO_OID} ${COMMIT_COUNT}"
+REQUEST_COUNT=$(("${COMMIT_COUNT}"<100 ? "${COMMIT_COUNT}":100))
 
 # Note
 # gh api --paginate detect endCursor, using a trick to make endCursor an alias for startCursor
 # shellcheck disable=SC2016
-gh api graphql --paginate -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F to="${COMMIT_TO}" -F endCursor="${START_CURSOR}" -F query='
-query($owner: String!, $repo: String!, $to: String!, $endCursor: String) {
+gh api graphql --paginate -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F to="${COMMIT_TO}" -F count="${REQUEST_COUNT}" -F endCursor="${START_CURSOR}" -F query='
+query($owner: String!, $repo: String!, $to: String!, $count: Int!, $endCursor: String) {
   repository(owner: $owner, name: $repo) {
     object(expression: $to) {
       ... on Commit {
-        history(last: 100, before: $endCursor) {
+        history(last: $count, before: $endCursor) {
           pageInfo {
             endCursor: startCursor
             hasNextPage

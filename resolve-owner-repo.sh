@@ -2,7 +2,6 @@
 set -euo pipefail
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
-    KAMIDANA_OPTINOS+=(--debug)
     set -x
 fi
 
