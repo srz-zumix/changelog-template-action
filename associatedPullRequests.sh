@@ -113,4 +113,4 @@ fragment Account on User {
   login
   name
 } 
-' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | reverse | .[] | select(.merged) | { pull_requests: . }'
+' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | reverse | map(select(.merged)) | { pull_requests: . }'
