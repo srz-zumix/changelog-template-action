@@ -44,7 +44,7 @@ query($owner: String!, $repo: String!, $to: String!, $count: Int!, $endCursor: S
             hasNextPage
           }
           nodes {
-            associatedPullRequests(first: 1) {
+            associatedPullRequests(first: 30) {
               edges {
                 node {
                   assignees(first: 10) {
@@ -113,4 +113,4 @@ fragment Account on User {
   login
   name
 } 
-' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | reverse | { pull_requests: . }'
+' --jq '.data.repository.object.history.nodes[].associatedPullRequests.edges[].node' | jq -s 'unique_by(.number) | reverse | map(select(.merged)) | { pull_requests: . }'
