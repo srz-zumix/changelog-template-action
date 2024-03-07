@@ -111,7 +111,7 @@ runs:
         echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@main
+      uses: srz-zumix/kamidana-action@v1
       with:
         template: "${{ inputs.template_file }}"
         output_file: "${{ inputs.output_file }}"

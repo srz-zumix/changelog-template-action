@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@main
+        uses: srz-zumix/changelog-template-action@v1
         with:
           template_file: release-note-with-body.md.j2
           output_file: changelog.md
@@ -67,7 +67,7 @@ jobs:
     steps:
       - name: changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@main
+        uses: srz-zumix/changelog-template-action@v1
         with:
           template_file: testdata/release-note-with-body.md.j2
           output_file: changelog.md
