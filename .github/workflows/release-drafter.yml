@@ -37,6 +37,12 @@ jobs:
 
   update_semver:
     needs: publish_release
-    uses: srz-zumix/changelog-template-action/.github/workflows/update_semver.yml@main
+    uses: ./.github/workflows/update_semver.yml
     with:
       tag: ${{ needs.publish_release.outputs.tag_name }}
+
+  update_release_notes:
+    needs: publish_release
+    uses: ./.github/workflows/update_releasenote.yml
+    with:
+      to: ${{ needs.publish_release.outputs.tag_name }}

@@ -4,9 +4,21 @@ on:
     inputs:
       to:
         description: 'git tag to'
+        type: string
         required: true
       from:
         description: 'git tag from'
+        type: string
+        required: false
+  workflow_call:
+    inputs:
+      to:
+        description: 'git tag to'
+        type: string
+        required: true
+      from:
+        description: 'git tag from'
+        type: string
         required: false
   release:
     types:
