@@ -69,7 +69,7 @@ jobs:
         id: changelog
         uses: srz-zumix/changelog-template-action@v2
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: changelog.md
       - name: update
         run: |

@@ -45,7 +45,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           owner: "${{ inputs.owner || 'srz-zumix' }}"
           repo: "${{ inputs.repo || 'gh-activity-report' }}"
@@ -68,7 +68,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           owner: "${{ inputs.owner || 'srz-zumix' }}"
           repo: "${{ inputs.repo || 'gh-activity-report' }}"
@@ -89,7 +89,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           owner: srz-zumix
           repo: wandbox-api

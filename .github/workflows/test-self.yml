@@ -37,7 +37,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           from: "${{ inputs.from || 'v0.2.0' }}"
           to: "${{ inputs.to || 'v0.3.0' }}"
@@ -58,7 +58,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           tee: true
           debug: true
@@ -77,7 +77,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           to: "${{ inputs.to || 'v0.3.0' }}"
           tee: true

@@ -1,4 +1,4 @@
-name: TestReusable
+name: TestReusable PR Submodules Changelog Comment
 on:
   pull_request:
   workflow_dispatch:
@@ -17,7 +17,11 @@ on:
         required: false
       repo:
         description: 'git repository name'
-        default: 'ci-specs'
+        default: 'docker-googletest'
+        required: false
+      pr:
+        description: 'pull request number'
+        default: '25'
         required: false
 
 permissions:
@@ -28,13 +32,14 @@ env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  test-reusable-submodules-changelog:
-    uses: ./.github/workflows/reusable-submodules-changelog.yml
+  test-reusable-pr-submodules-changelog-comment:
+    uses: ./.github/workflows/reusable-pr-submodules-changelog-comment.yml
     with:
-      template_file: templates/release-note-with-body.md.j2
+      template_file: templates/submodule-diff-comment.md.j2
       owner: "${{ inputs.owner || 'srz-zumix' }}"
-      repo: "${{ inputs.repo || 'ci-specs' }}"
-      from: "${{ inputs.from || '757727599398a020651f59254e7496283d372173' }}"
-      to: "${{ inputs.to || 'b5782867c3424f7ac4fc0469833536000e2e88fa' }}"
+      repo: "${{ inputs.repo || 'docker-googletest' }}"
+      from: "${{ inputs.from || '' }}"
+      to: "${{ inputs.to || '' }}"
+      pr: "${{ inputs.pr || '25' }}"
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

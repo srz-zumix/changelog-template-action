@@ -52,7 +52,7 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: changelog.md
           from: "${{ inputs.from || '' }}"
           to: "${{ inputs.to || '' }}"
