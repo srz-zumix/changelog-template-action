@@ -114,6 +114,7 @@ runs:
         echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
     - name: create template file
       id: create-template-file
+      shell: bash
       run: |
         cat << 'EOS' > "${{ runner.temp }}/template.j2"
         ${{ inputs.template }}
