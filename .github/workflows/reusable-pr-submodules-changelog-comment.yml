@@ -70,7 +70,7 @@ jobs:
         id: resolve-from
         run: |
           FROM_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json baseRefName --jq '.baseRefName')
-          FROM_SHA=$(gh api repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${{ inputs.to }} --jq '.merge_base_commit.sha')
+          FROM_SHA=$(gh api "repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
           echo "sha=${FROM_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.from == ''
       - name: Get submodules form/to
