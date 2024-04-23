@@ -58,20 +58,27 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - name: Resolove from/to
-        id: resolve
+      - name: Resolove to
+        id: resolve-to
+        run: |
+          TO_SHA=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json headRefOid --jq '.headRefOid')
+          echo "sha=${TO_SHA}" >> "${GITHUB_OUTPUT}"
+        if: inputs.to == ''
+      - name: Resolove from
+        env:
+          INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.to }}"
+        id: resolve-from
         run: |
           FROM_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json baseRefName --jq '.baseRefName')
-          TO_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json headRefOid --jq '.headRefOid')
-          echo "from=${FROM_REF}" >> "${GITHUB_OUTPUT}"
-          echo "to=${TO_REF}" >> "${GITHUB_OUTPUT}"
-        if: inputs.from == '' || inputs.to == ''
+          FROM_SHA=$(gh api repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${{ inputs.to }} --jq '.merge_base_commit.sha')
+          echo "sha=${FROM_SHA}" >> "${GITHUB_OUTPUT}"
+        if: inputs.from == ''
       - name: Get submodules form/to
         shell: bash
         id: submodules
         env:
-          INPUTS_FROM: "${{ inputs.from || steps.resolve.outputs.from }}"
-          INPUTS_TO: "${{ inputs.to || steps.resolve.outputs.to }}"
+          INPUTS_FROM: "${{ steps.resolve-from.outputs.sha }}"
+          INPUTS_TO: "${{ steps.resolve-to.outputs.sha }}"
           INPUTS_OWNER: "${{ inputs.owner }}"
           INPUTS_REPO: "${{ inputs.repo }}"
         run: |
