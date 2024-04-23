@@ -13,9 +13,12 @@ inputs:
   git_url:
     description: 'git repository url (owner/repo inputs are ignored)'
     required: false
+  template:
+    description: 'Template text'
+    required: false
   template_file:
     description: 'Template file path'
-    required: true
+    required: false
   output_file:
     description: 'Output file path'
     required: false
@@ -109,11 +112,19 @@ runs:
           echo "}"
         } > "${{ runner.temp }}/revision.json"
         echo "${INPUTS_CONTEXT}" | jq "del(.github_token,.debug) | { inputs: . }" > "${{ runner.temp }}/inputs.json"
+    - name: create template file
+      id: create-template-file
+      run: |
+        cat << 'EOS' > "${{ runner.temp }}/template.j2"
+        ${{ inputs.template }}
+        EOS
+        echo "path=${{ runner.temp }}/template.j2" >> "${GITHUB_OUTPUT}"
+      if: inputs.template_file == ''
     - name: kamidana
       id: kamidana
       uses: srz-zumix/kamidana-action@v2
       with:
-        template: "${{ inputs.template_file }}"
+        template: "${{ inputs.template_file || steps.create-template-file.outputs.path }}"
         output_file: "${{ inputs.output_file }}"
         data_files: |
           ${{ runner.temp }}/associatedPullRequests.json

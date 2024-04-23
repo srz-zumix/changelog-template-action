@@ -35,7 +35,14 @@ jobs:
   test-reusable-pr-submodules-changelog-comment:
     uses: ./.github/workflows/reusable-pr-submodules-changelog-comment.yml
     with:
-      template_file: templates/submodule-diff-comment.md.j2
+      template: |
+        [Compare {{ from_revision }} with {{ to_revision }}]({{ env('GITHUB_SERVER_URL') }}/{{ owner }}/{{ repo }}/compare/{{ from_revision }}...{{ to_revision }})
+
+        ## Changes
+
+        {% for pull_request in pull_requests %}
+        * [{{ pull_request.title }}]({{ pull_request.url }}) - @{{ pull_request.author.login }} {{ pull_request.mergedAt }}
+        {%- endfor %}
       owner: "${{ inputs.owner || 'srz-zumix' }}"
       repo: "${{ inputs.repo || 'docker-googletest' }}"
       from: "${{ inputs.from || '' }}"

@@ -6,9 +6,13 @@ on:
         default: '[ "ubuntu-latest" ]'
         required: false
         type: string
+      template:
+        description: 'Template text'
+        required: false
+        type: string
       template_file:
         description: 'Template file path'
-        required: true
+        required: false
         type: string
       owner:
         description: 'git repository owner'
@@ -132,17 +136,13 @@ jobs:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
     name: submodules-changelog - ${{ matrix.name }}
     steps:
-      - name: $github
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "${GITHUB_CONTEXT}"
-        if: false
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@main
+        uses: srz-zumix/changelog-template-action@feature/pr_submodule_diff_comment
         with:
+          template: "${{ inputs.template }}"
           template_file: "${{ inputs.template_file }}"
           git_url: "${{ matrix.gitUrl }}"
           from: "${{ matrix.from }}"
