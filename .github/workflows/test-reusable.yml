@@ -24,9 +24,6 @@ permissions:
   contents: read
   pull-requests: read
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   test-reusable-submodules-changelog:
     uses: ./.github/workflows/reusable-submodules-changelog.yml
