@@ -66,9 +66,8 @@ jobs:
         if: inputs.to == ''
       - name: Resolove from
         env:
-          INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.to }}"
+          INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
         id: resolve-from
-        shell: bash -ex {0}
         run: |
           FROM_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json baseRefName --jq '.baseRefName')
           FROM_SHA=$(gh api "repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
