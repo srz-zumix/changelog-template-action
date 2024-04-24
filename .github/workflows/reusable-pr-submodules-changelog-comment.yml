@@ -154,4 +154,4 @@ jobs:
         with:
           run: |
             # shellcheck disable=SC2016
-            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}"
+            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}
