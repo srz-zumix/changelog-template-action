@@ -28,9 +28,6 @@ permissions:
   contents: read
   pull-requests: read
 
-env:
-  GH_PR_COMMENT_OPTIONS: --edit-last
-
 jobs:
   test-reusable-pr-submodules-changelog-comment:
     uses: ./.github/workflows/reusable-pr-submodules-changelog-comment.yml
@@ -48,5 +45,6 @@ jobs:
       from: "${{ inputs.from || '' }}"
       to: "${{ inputs.to || '' }}"
       pr: "${{ inputs.pr || '25' }}"
+      gh_comment_options: "--edit-last"
     secrets:
       GH_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}

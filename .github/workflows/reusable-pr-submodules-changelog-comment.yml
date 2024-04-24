@@ -39,6 +39,11 @@ on:
         default: "${{ github.event.pull_request.head.sha || '' }}"
         required: false
         type: string
+      gh_comment_options:
+        description: 'gh pr comment options'
+        default: ''
+        required: false
+        type: string
 
     secrets:
       GH_TOKEN:
@@ -149,4 +154,4 @@ jobs:
         with:
           run: |
             # shellcheck disable=SC2016
-            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${GH_PR_COMMENT_OPTIONS}
+            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}"
