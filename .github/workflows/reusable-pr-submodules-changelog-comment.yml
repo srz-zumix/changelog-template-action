@@ -146,5 +146,6 @@ jobs:
           output_file: ${{ runner.temp }}/changelog.md
       - name: Comment to
         run: |
+          cat ${{ runner.temp }}/changelog.md
           gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md
 
