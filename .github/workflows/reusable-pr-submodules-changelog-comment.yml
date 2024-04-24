@@ -145,7 +145,8 @@ jobs:
           to: "${{ matrix.to }}"
           output_file: ${{ runner.temp }}/changelog.md
       - name: Comment to
-        run: |
-          cat ${{ runner.temp }}/changelog.md
-          gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md
-
+        uses: srz-zumix/retry-run-action@v0
+        with:
+          run: |
+            # shellcheck disable=SC2016
+            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${GH_PR_COMMENT_OPTIONS}
