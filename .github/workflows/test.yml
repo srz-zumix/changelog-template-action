@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: changelog
         id: changelog
         uses: ./
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: changelog
         id: changelog
         uses: ./
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: changelog
         id: changelog
         uses: ./
