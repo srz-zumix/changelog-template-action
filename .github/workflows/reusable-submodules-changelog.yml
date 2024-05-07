@@ -59,7 +59,7 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get parent changelog
         uses: srz-zumix/changelog-template-action@main
         id: changelog
