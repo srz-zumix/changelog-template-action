@@ -141,7 +141,7 @@ jobs:
         if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@feature/pr_submodule_diff_comment
+        uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
           template_file: "${{ inputs.template_file }}"
