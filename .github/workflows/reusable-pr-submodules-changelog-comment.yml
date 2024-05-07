@@ -39,6 +39,10 @@ on:
         default: "${{ github.event.pull_request.head.sha || '' }}"
         required: false
         type: string
+      host:
+        description: 'github host'
+        default: github.com
+        type: string
       gh_comment_options:
         description: 'gh pr comment options'
         default: ''
@@ -86,6 +90,7 @@ jobs:
         shell: bash
         id: submodules
         env:
+          INPUTS_HOST: "${{ inputs.host }}"
           INPUTS_FROM: "${{ steps.resolve-from.outputs.sha }}"
           INPUTS_TO: "${{ steps.resolve-to.outputs.sha }}"
           INPUTS_OWNER: "${{ inputs.owner }}"
@@ -93,6 +98,7 @@ jobs:
         run: |
           # shellcheck disable=SC2016
           gh api graphql \
+            --hostname "${INPUTS_HOST}" \
             -F owner="${INPUTS_OWNER}" \
             -F repo="${INPUTS_REPO}" \
             -F from="${INPUTS_FROM}" \
