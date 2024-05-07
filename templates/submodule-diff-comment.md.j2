@@ -1,5 +1,9 @@
 [{{ owner }}/{{ repo }} Compare]({{ env('GITHUB_SERVER_URL') }}/{{ owner }}/{{ repo }}/compare/{{ from_revision }}...{{ to_revision }})
 
 {% for pull_request in pull_requests %}
+{%- if 'login' in pull_request.author %}
 * [{{ pull_request.title }}]({{ pull_request.url }}) - @{{ pull_request.author.login }} {{ pull_request.mergedAt }}  
+{%- else %}
+* [{{ pull_request.title }}]({{ pull_request.url }}) - {{ pull_request.mergedAt }}  
+{%- endif %}
 {%- endfor %}
