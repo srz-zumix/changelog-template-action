@@ -7,11 +7,11 @@ on:
         required: false
         type: string
       template:
-        description: 'Template text'
+        description: 'comment template text'
         required: false
         type: string
       template_file:
-        description: 'Template file path'
+        description: 'comment template file path'
         required: false
         type: string
       owner:
@@ -24,17 +24,25 @@ on:
         default: "${{ github.event.repository.name }}"
         required: false
         type: string
-      git_url:
-        description: 'git repository url (owner/repo inputs are ignored)'
+      pr:
+        description: 'pull request number'
+        default: "${{ github.event.number || '' }}"
         required: false
         type: string
       from:
         description: 'git commit revision range start from'
-        required: true
+        default: "${{ github.event.pull_request.base.sha || '' }}"
+        required: false
         type: string
       to:
         description: 'git commit revision range end to'
-        required: true
+        default: "${{ github.event.pull_request.head.sha || '' }}"
+        required: false
+        type: string
+      gh_comment_options:
+        description: 'gh pr comment options'
+        default: ''
+        required: false
         type: string
 
     secrets:
@@ -48,7 +56,7 @@ env:
   GH_ENTERPRISE_TOKEN: ${{ secrets.GH_ENTERPRISE_TOKEN }}
 
 jobs:
-  parent-changelog:
+  get-submodules-diff:
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
     outputs:
       submodules: ${{ steps.submodules.outputs.submodules }}
@@ -59,36 +67,29 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - uses: actions/checkout@v4
-      - name: Get parent changelog
-        uses: srz-zumix/changelog-template-action@main
-        id: changelog
-        with:
-          template_file: "${{ inputs.template_file }}"
-          owner: "${{ inputs.owner }}"
-          repo: "${{ inputs.repo }}"
-          git_url: "${{ inputs.git_url }}"
-          from: "${{ inputs.from }}"
-          to: "${{ inputs.to }}"
-      - name: Save to file
-        shell: bash
+      - name: Resolove to
+        id: resolve-to
         run: |
-          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          ${{ steps.changelog.outputs.text }}
-          EOS
-      - name: Upload changelog
-        uses: actions/upload-artifact@v3
-        with:
-          path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          if-no-files-found: error
+          TO_SHA=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json headRefOid --jq '.headRefOid')
+          echo "sha=${TO_SHA}" >> "${GITHUB_OUTPUT}"
+        if: inputs.to == ''
+      - name: Resolove from
+        env:
+          INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
+        id: resolve-from
+        run: |
+          FROM_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json baseRefName --jq '.baseRefName')
+          FROM_SHA=$(gh api "repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
+          echo "sha=${FROM_SHA}" >> "${GITHUB_OUTPUT}"
+        if: inputs.from == ''
       - name: Get submodules form/to
         shell: bash
         id: submodules
         env:
-          INPUTS_FROM: "${{ inputs.from }}"
-          INPUTS_TO: "${{ inputs.to }}"
-          INPUTS_OWNER: "${{ steps.changelog.outputs.owner }}"
-          INPUTS_REPO: "${{ steps.changelog.outputs.repo }}"
+          INPUTS_FROM: "${{ steps.resolve-from.outputs.sha }}"
+          INPUTS_TO: "${{ steps.resolve-to.outputs.sha }}"
+          INPUTS_OWNER: "${{ inputs.owner }}"
+          INPUTS_REPO: "${{ inputs.repo }}"
         run: |
           # shellcheck disable=SC2016
           gh api graphql \
@@ -120,41 +121,37 @@ jobs:
           (.data.repository.to.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, to : .subprojectCommitOid } }] | from_entries),
           (.data.repository.from.submodules.nodes[] | [{ key: .name, value: { name: .name, gitUrl: .gitUrl, from : .subprojectCommitOid } }] | from_entries)
           ' \
-          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value] | map(select(.from != null and .to != null and .from != .to))' > submodules.json
+          | jq -s 'reduce .[] as $n ({}; . * $n) | to_entries | [.[].value] | map(select(.from != null and .to != null and .from != .to))' | tee -a submodules.json
           SUBMODULES=$(jq -c < submodules.json)
           echo "submodules=${SUBMODULES}" >> "${GITHUB_OUTPUT}"
 
 
   submodules-changelog:
+    name: submodules-changelog - ${{ matrix.name }}
     runs-on: "${{ fromJSON(inputs.runs-on) }}"
-    needs: parent-changelog
-    if: fromJson(needs.parent-changelog.outputs.submodules)[0] != null
+    needs: get-submodules-diff
+    if: fromJson(needs.get-submodules-diff.outputs.submodules)[0] != null
     strategy:
       fail-fast: false
       matrix:
         include:
-          "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
-    name: submodules-changelog - ${{ matrix.name }}
+          "${{ fromJson( needs.get-submodules-diff.outputs.submodules ) }}"
     steps:
       - uses: actions/checkout@v4
         if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@feature/pr_submodule_diff_comment
+        uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
           template_file: "${{ inputs.template_file }}"
           git_url: "${{ matrix.gitUrl }}"
           from: "${{ matrix.from }}"
           to: "${{ matrix.to }}"
-      - name: Save to file
-        shell: bash
-        run: |
-          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          ${{ steps.changelog.outputs.text }}
-          EOS
-      - name: Upload changelog
-        uses: actions/upload-artifact@v3
+          output_file: ${{ runner.temp }}/changelog.md
+      - name: Comment to
+        uses: srz-zumix/retry-run-action@v0
         with:
-          path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          if-no-files-found: error
+          run: |
+            # shellcheck disable=SC2016
+            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}

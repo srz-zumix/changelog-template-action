@@ -24,14 +24,11 @@ permissions:
   contents: read
   pull-requests: read
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
-  test-reusable:
-    uses: srz-zumix/changelog-template-action/.github/workflows/reusable-submodules-changelog.yml@main
+  test-reusable-submodules-changelog:
+    uses: ./.github/workflows/reusable-submodules-changelog.yml
     with:
-      template_file: testdata/release-note-with-body.md.j2
+      template_file: templates/release-note-with-body.md.j2
       owner: "${{ inputs.owner || 'srz-zumix' }}"
       repo: "${{ inputs.repo || 'ci-specs' }}"
       from: "${{ inputs.from || '757727599398a020651f59254e7496283d372173' }}"

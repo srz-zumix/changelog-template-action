@@ -37,14 +37,14 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           from: "${{ inputs.from || 'v0.2.0' }}"
           to: "${{ inputs.to || 'v0.3.0' }}"
           tee: true
           debug: true
       - run: |
-          cat << EOS | tee output.txt
+          cat << 'EOS' | tee output.txt
           ${{ steps.changelog.outputs.text }}
           EOS
           diff output.txt test.txt
@@ -58,12 +58,12 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           tee: true
           debug: true
       - run: |
-          cat << EOS | tee output.txt
+          cat << 'EOS' | tee output.txt
           ${{ steps.changelog.outputs.text }}
           EOS
           diff output.txt test.txt
@@ -77,13 +77,13 @@ jobs:
         id: changelog
         uses: ./
         with:
-          template_file: testdata/release-note-with-body.md.j2
+          template_file: templates/release-note-with-body.md.j2
           output_file: test.txt
           to: "${{ inputs.to || 'v0.3.0' }}"
           tee: true
           debug: true
       - run: |
-          cat << EOS | tee output.txt
+          cat << 'EOS' | tee output.txt
           ${{ steps.changelog.outputs.text }}
           EOS
           diff output.txt test.txt
