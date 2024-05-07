@@ -98,7 +98,7 @@ jobs:
           tee: true
           debug: true
       - run: |
-          cat << EOS | tee output.txt
+          cat << 'EOS' | tee output.txt
           ${{ steps.changelog.outputs.text }}
           EOS
           diff output.txt test.txt
