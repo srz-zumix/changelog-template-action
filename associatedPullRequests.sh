@@ -28,7 +28,8 @@ query($owner: String!, $repo: String!, $sha: String!) {
 ' --jq '.data.repository.object.oid')
 
 START_CURSOR="${TO_OID} ${COMMIT_COUNT}"
-REQUEST_COUNT=$(("${COMMIT_COUNT}<100 ? ${COMMIT_COUNT}:100"))
+# shellcheck disable=SC2086
+REQUEST_COUNT=$((${COMMIT_COUNT}<100 ? ${COMMIT_COUNT}:100))
 
 # Note
 # gh api --paginate detect endCursor, using a trick to make endCursor an alias for startCursor
