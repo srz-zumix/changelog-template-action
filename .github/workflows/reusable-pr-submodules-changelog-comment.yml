@@ -8,11 +8,7 @@ on:
         type: string
       template:
         description: 'comment template text'
-        required: false
-        type: string
-      template_file:
-        description: 'comment template file path'
-        required: false
+        required: true
         type: string
       owner:
         description: 'git repository owner'
@@ -56,6 +52,7 @@ on:
         required: false
 
 env:
+  GH_HOST: ${{ inputs.host }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   GH_ENTERPRISE_TOKEN: ${{ secrets.GH_ENTERPRISE_TOKEN }}
 
@@ -91,8 +88,8 @@ jobs:
         id: submodules
         env:
           INPUTS_HOST: "${{ inputs.host }}"
-          INPUTS_FROM: "${{ steps.resolve-from.outputs.sha }}"
-          INPUTS_TO: "${{ steps.resolve-to.outputs.sha }}"
+          INPUTS_FROM: "${{ inputs.from || steps.resolve-from.outputs.sha }}"
+          INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
           INPUTS_OWNER: "${{ inputs.owner }}"
           INPUTS_REPO: "${{ inputs.repo }}"
         run: |
@@ -143,14 +140,11 @@ jobs:
         include:
           "${{ fromJson( needs.get-submodules-diff.outputs.submodules ) }}"
     steps:
-      - uses: actions/checkout@v4
-        if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
         uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
-          template_file: "${{ inputs.template_file }}"
           git_url: "${{ matrix.gitUrl }}"
           from: "${{ matrix.from }}"
           to: "${{ matrix.to }}"
