@@ -36,6 +36,10 @@ on:
         description: 'git commit revision range end to'
         required: true
         type: string
+      host:
+        description: 'github host'
+        default: github.com
+        type: string
 
     secrets:
       GH_TOKEN:
@@ -85,6 +89,7 @@ jobs:
         shell: bash
         id: submodules
         env:
+          INPUTS_HOST: "${{ inputs.host }}"
           INPUTS_FROM: "${{ inputs.from }}"
           INPUTS_TO: "${{ inputs.to }}"
           INPUTS_OWNER: "${{ steps.changelog.outputs.owner }}"
@@ -92,6 +97,7 @@ jobs:
         run: |
           # shellcheck disable=SC2016
           gh api graphql \
+            --hostname "${INPUTS_HOST}" \
             -F owner="${INPUTS_OWNER}" \
             -F repo="${INPUTS_REPO}" \
             -F from="${INPUTS_FROM}" \
@@ -140,7 +146,7 @@ jobs:
         if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@feature/pr_submodule_diff_comment
+        uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
           template_file: "${{ inputs.template_file }}"
