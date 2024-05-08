@@ -102,3 +102,26 @@ jobs:
           ${{ steps.changelog.outputs.text }}
           EOS
           diff output.txt test.txt
+
+  behind-diff-test:
+    runs-on: macos-latest
+    needs: prepare
+    steps:
+      - uses: actions/checkout@v4
+      - name: changelog
+        id: changelog
+        uses: ./
+        with:
+          template_file: templates/release-note-with-body.md.j2
+          output_file: test.txt
+          owner: srz-zumix
+          repo: wandbox-api
+          to: v0.9.6
+          from: v0.10.0
+          tee: true
+          debug: true
+      - run: |
+          cat << 'EOS' | tee output.txt
+          ${{ steps.changelog.outputs.text }}
+          EOS
+          diff output.txt test.txt
