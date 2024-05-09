@@ -155,3 +155,4 @@ jobs:
           run: |
             # shellcheck disable=SC2016
             gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}
+        if: steps.changelog.outputs.commit_count > 0
