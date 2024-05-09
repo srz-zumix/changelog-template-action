@@ -78,4 +78,9 @@ resolve_from() {
 resolve_to
 resolve_from
 
+COMMIT_COUNT=$(gh api \
+  "/repos/${TARGET_REPO}/compare/${RESOLVE_FROM}...${RESOLVE_TO}" \
+  --jq .total_commits)
+echo "commit_count=${COMMIT_COUNT}" >> "${GITHUB_OUTPUT}"
+
 exit ${EXIT_CODE}

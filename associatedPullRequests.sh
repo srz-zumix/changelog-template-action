@@ -5,14 +5,17 @@ REPO_OWNER="${INPUTS_OWNER:-${1:-}}"
 REPO_NAME="${INPUTS_REPO:-${2:-}}"
 COMMIT_FROM="${INPUTS_FROM:-${3:-}}"
 COMMIT_TO="${INPUTS_TO:-${4:-}}"
+COMMIT_COUNT=${INPUTS_COMMIT_COUNT:-}
 
 if [ "${INPUTS_DEBUG:-false}" = "true" ]; then
     set -x
 fi
 
-COMMIT_COUNT=$(gh api \
-  "/repos/${REPO_OWNER}/${REPO_NAME}/compare/${COMMIT_FROM}...${COMMIT_TO}" \
-  --jq .total_commits)
+if [ -z "${COMMIT_COUNT}" ]; then
+    COMMIT_COUNT=$(gh api \
+    "/repos/${REPO_OWNER}/${REPO_NAME}/compare/${COMMIT_FROM}...${COMMIT_TO}" \
+    --jq .total_commits)
+fi
 
 # shellcheck disable=SC2016
 TO_OID=$(gh api graphql -F owner="${REPO_OWNER}" -F repo="${REPO_NAME}" -F sha="${COMMIT_TO}" -F query='
