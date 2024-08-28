@@ -81,7 +81,7 @@ jobs:
           ${{ steps.changelog.outputs.text }}
           EOS
       - name: Upload changelog
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
           if-no-files-found: error
@@ -160,7 +160,7 @@ jobs:
           ${{ steps.changelog.outputs.text }}
           EOS
       - name: Upload changelog
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
           if-no-files-found: error
