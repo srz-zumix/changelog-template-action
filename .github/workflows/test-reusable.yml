@@ -25,6 +25,15 @@ permissions:
   pull-requests: read
 
 jobs:
+  rebuilder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rebuilder
+        uses: srz-zumix/github-actions-rebuilder@v0
+        with:
+          github_token: ${{ secrets.TEST_GITHUB_TOKEN }}
+        if: github.event_name == 'workflow_dispatch'
+
   test-reusable-submodules-changelog:
     uses: ./.github/workflows/reusable-submodules-changelog.yml
     with:
