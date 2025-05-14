@@ -64,6 +64,13 @@ query($owner: String!, $repo: String!, $to: String!, $count: Int!, $endCursor: S
                   closed
                   closedAt
                   createdAt
+                  files(first: 300) {
+                    totalCount
+                    nodes {
+                      path
+                      viewerViewedState
+                    }
+                  }
                   headRefName
                   headRepository {
                     name
