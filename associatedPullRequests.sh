@@ -64,7 +64,7 @@ query($owner: String!, $repo: String!, $to: String!, $count: Int!, $endCursor: S
                   closed
                   closedAt
                   createdAt
-                  files(first: 300) {
+                  files(first: 100) {
                     totalCount
                     nodes {
                       path
