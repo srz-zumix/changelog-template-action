@@ -189,14 +189,14 @@ runs:
           GITHUB_COMMENT_OPTIONS+=('-u' 'Comment.Meta.Vars.target == "changelog" && Comment.Meta.Vars.repository == Vars.repository')
         fi
         set -x
-        github-comment exec \
+        github-comment post \
           --org "${INPUTS_OWNER}" \
           --repo "${INPUTS_REPO}" \
           --pr "${INPUTS_COMMENT_TO_ISSUE}" \
           "${GITHUB_COMMENT_OPTIONS[@]}" \
           -k changelog \
           -v "repository:${INPUTS_OWNER}/${INPUTS_REPO}" \
-          -- cat "${{ runner.temp }}/changelog.md"
+          - < "${{ runner.temp }}/changelog.md"
       working-directory: ${{ github.action_path }}
       if: inputs.comment_to_issue != ''
 
