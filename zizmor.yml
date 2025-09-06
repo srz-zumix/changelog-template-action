@@ -1,0 +1,11 @@
+rules:
+  template-injection:
+    ignore:
+      - test.yml
+      - test-self.yml
+  unpinned-uses:
+    ignore:
+      - reusable-pr-submodules-changelog-comment.yml:146
+      - reusable-submodules-changelog.yml:70
+      - reusable-submodules-changelog.yml:155
+

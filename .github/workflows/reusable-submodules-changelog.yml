@@ -64,6 +64,8 @@ jobs:
           echo "${GITHUB_CONTEXT}"
         if: false
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Get parent changelog
         uses: srz-zumix/changelog-template-action@main
         id: changelog
@@ -74,12 +76,13 @@ jobs:
           git_url: "${{ inputs.git_url }}"
           from: "${{ inputs.from }}"
           to: "${{ inputs.to }}"
+          output_file: ${{ runner.temp }}/changelog.md
       - name: Save to file
         shell: bash
+        env:
+          OUTPUT_FILE: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
         run: |
-          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          ${{ steps.changelog.outputs.text }}
-          EOS
+          cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
         uses: actions/upload-artifact@v4
         with:
@@ -144,6 +147,8 @@ jobs:
     name: submodules-changelog - ${{ matrix.name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
         if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
@@ -154,12 +159,13 @@ jobs:
           git_url: "${{ matrix.gitUrl }}"
           from: "${{ matrix.from }}"
           to: "${{ matrix.to }}"
+          output_file: ${{ runner.temp }}/changelog.md
       - name: Save to file
         shell: bash
+        env:
+          OUTPUT_FILE: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
         run: |
-          cat << EOS > ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
-          ${{ steps.changelog.outputs.text }}
-          EOS
+          cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
         uses: actions/upload-artifact@v4
         with:

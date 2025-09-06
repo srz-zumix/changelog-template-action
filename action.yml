@@ -31,6 +31,9 @@ inputs:
   kamidana_additionals:
     description: 'kamidana additionals modules'
     required: false
+  comment_to_issue:
+    description: 'issue or pull request number to post comment (if not set, no comment)'
+    required: false
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -127,10 +130,10 @@ runs:
       if: inputs.template_file == ''
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@v2
+      uses: srz-zumix/kamidana-action@f83fd111b652b0833f00f32a41b45945fb343778 # v2.7.0
       with:
         template: "${{ inputs.template_file || steps.create-template-file.outputs.path }}"
-        output_file: "${{ inputs.output_file }}"
+        output_file: "${{ runner.temp }}/changelog.md"
         data_files: |
           ${{ runner.temp }}/associatedPullRequests.json
           ${{ runner.temp }}/revision.json
@@ -143,7 +146,37 @@ runs:
           do
           loopcontrols
           debug
-
+    - name: Copy to output file
+      shell: bash
+      run: |
+        cp "${{ runner.temp }}/changelog.md" "${{ inputs.output_file }}"
+      if: inputs.output_file != '' && inputs.output_file != '${{ runner.temp }}/changelog.md'
+    - name: Aqua install
+      uses: aquaproj/aqua-installer@d1fe50798dbadd4eb5b98957290ca175f6b4870f # v4.0.2
+      with:
+        aqua_version: v2.53.9
+        aqua_opts: "-t action"
+        working_directory: ${{ github.action_path }}
+      if: inputs.comment_to_issue != ''
+    - name: Hide old comment
+      env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
+        GITHUB_TOKEN: ${{ github.token }}
+      run: github-comment hide -k "${INPUTS_OWNER}/${INPUTS_REPO}"
+      if: inputs.comment_to_issue != ''
+    - name: Comment to
+      env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        github-comment post \
+          --org "${INPUTS_OWNER}" \
+          --repo "${INPUTS_REPO}" \
+          --pr "${{ inputs.comment_to_issue }}" \
+          -k "${INPUTS_OWNER}/${INPUTS_REPO}" < "${{ runner.temp }}/changelog.md"
+      if: inputs.comment_to_issue != ''
 
 branding:
   icon: 'sliders'

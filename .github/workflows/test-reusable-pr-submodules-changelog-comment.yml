@@ -49,6 +49,6 @@ jobs:
       from: "${{ inputs.from || '' }}"
       to: "${{ inputs.to || '' }}"
       pr: "${{ inputs.pr || '25' }}"
-      gh_comment_options: "--edit-last"
+      comment_mode: "update"
     secrets:
       GH_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}
