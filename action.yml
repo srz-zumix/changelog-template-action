@@ -34,6 +34,10 @@ inputs:
   comment_to_issue:
     description: 'issue or pull request number to post comment (if not set, no comment)'
     required: false
+   comment_mode:
+    description: 'update or hide previous comment [update|hide]'
+    default: 'hide'
+    required: false
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -148,8 +152,10 @@ runs:
           debug
     - name: Copy to output file
       shell: bash
+      env:
+        INPUTS_OUTPUT_FILE: "${{ inputs.output_file }}"
       run: |
-        cp "${{ runner.temp }}/changelog.md" "${{ inputs.output_file }}"
+        cp "${{ runner.temp }}/changelog.md" "${INPUTS_OUTPUT_FILE}"
       if: inputs.output_file != '' && inputs.output_file != '${{ runner.temp }}/changelog.md'
     - name: Aqua install
       uses: aquaproj/aqua-installer@d1fe50798dbadd4eb5b98957290ca175f6b4870f # v4.0.2
@@ -165,18 +171,25 @@ runs:
         INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         GITHUB_TOKEN: ${{ github.token }}
       run: github-comment hide -k "${INPUTS_OWNER}/${INPUTS_REPO}"
-      if: inputs.comment_to_issue != ''
+      if: inputs.comment_to_issue != '' && inputs.comment_mode == 'hide'
     - name: Comment to
       shell: bash
       env:
+        GITHUB_TOKEN: ${{ github.token }}
         INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
         INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
-        GITHUB_TOKEN: ${{ github.token }}
+        INPUTS_COMMENT_TO_ISSUE: "${{ inputs.comment_to_issue }}"
+        INPUTS_COMMENT_MODE: ${{ inputs.comment_mode }}
       run: |
+        GITHUB_COMMENT_OPTIONS=()
+        if [ "${INPUTS_COMMENT_MODE}" != 'hide' ]; then
+          GITHUB_COMMENT_OPTIONS+=('-u' "TemplateKey == \"${INPUTS_OWNER}/${INPUTS_REPO}\"")
+        fi
         github-comment post \
           --org "${INPUTS_OWNER}" \
           --repo "${INPUTS_REPO}" \
-          --pr "${{ inputs.comment_to_issue }}" \
+          --pr "${INPUTS_COMMENT_TO_ISSUE}" \
+          "${GITHUB_COMMENT_OPTIONS[@]}" \
           -k "${INPUTS_OWNER}/${INPUTS_REPO}" < "${{ runner.temp }}/changelog.md"
       if: inputs.comment_to_issue != ''
 
