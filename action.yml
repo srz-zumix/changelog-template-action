@@ -188,6 +188,7 @@ runs:
         if [ "${INPUTS_COMMENT_MODE}" != 'hide' ]; then
           GITHUB_COMMENT_OPTIONS+=('-u' 'Comment.Meta.Vars.target == "changelog" && Comment.Meta.Vars.repository == Vars.repository')
         fi
+        set -x
         github-comment exec \
           --org "${INPUTS_OWNER}" \
           --repo "${INPUTS_REPO}" \
