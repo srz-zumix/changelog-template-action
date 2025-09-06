@@ -155,8 +155,10 @@ runs:
       env:
         INPUTS_OUTPUT_FILE: "${{ inputs.output_file }}"
       run: |
-        cp "${{ runner.temp }}/changelog.md" "${INPUTS_OUTPUT_FILE}"
-      if: (inputs.output_file != '') && (inputs.output_file != '${{ runner.temp }}/changelog.md')
+        if [ "${INPUTS_OUTPUT_FILE}" != "${{ runner.temp }}/changelog.md" ]; then
+          cp "${{ runner.temp }}/changelog.md" "${INPUTS_OUTPUT_FILE}"
+        fi
+      if: inputs.output_file != ''
     - name: Aqua install
       uses: aquaproj/aqua-installer@d1fe50798dbadd4eb5b98957290ca175f6b4870f # v4.0.2
       with:
