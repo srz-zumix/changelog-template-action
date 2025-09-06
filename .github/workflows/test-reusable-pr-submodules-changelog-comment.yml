@@ -21,7 +21,7 @@ on:
         required: false
       pr:
         description: 'pull request number'
-        default: '25'
+        default: '28'
         required: false
 
 permissions:
