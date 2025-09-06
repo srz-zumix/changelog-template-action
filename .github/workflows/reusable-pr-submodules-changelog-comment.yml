@@ -74,7 +74,7 @@ jobs:
       - name: Resolove to
         id: resolve-to
         run: |
-          TO_SHA=$(gh pr view ${INPUTS_PR} --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json headRefOid --jq '.headRefOid')
+          TO_SHA=$(gh pr view "${INPUTS_PR}" --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json headRefOid --jq '.headRefOid')
           echo "sha=${TO_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.to == ''
       - name: Resolove from
@@ -82,7 +82,7 @@ jobs:
           INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
         id: resolve-from
         run: |
-          FROM_REF=$(gh pr view ${INPUTS_PR} --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json baseRefName --jq '.baseRefName')
+          FROM_REF=$(gh pr view "${INPUTS_PR}" --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json baseRefName --jq '.baseRefName')
           FROM_SHA=$(gh api "repos/${INPUTS_OWNER}/${INPUTS_REPO}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
           echo "sha=${FROM_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.from == ''
