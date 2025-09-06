@@ -11,6 +11,7 @@ post:
       {{.Stdin}}
 exec:
   changelog:
+  - when: true
     template: |
       {{.Stdout}}
 hide:
