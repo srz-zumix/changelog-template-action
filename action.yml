@@ -193,7 +193,8 @@ runs:
           --repo "${INPUTS_REPO}" \
           --pr "${INPUTS_COMMENT_TO_ISSUE}" \
           "${GITHUB_COMMENT_OPTIONS[@]}" \
-          -k "${INPUTS_OWNER}/${INPUTS_REPO}" < "${{ runner.temp }}/changelog.md"
+          -k "${INPUTS_OWNER}/${INPUTS_REPO}" \
+          -stdin-template < "${{ runner.temp }}/changelog.md"
       working-directory: ${{ github.action_path }}
       if: inputs.comment_to_issue != ''
 
