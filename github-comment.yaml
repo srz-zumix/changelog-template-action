@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/suzuki-shunsuke/github-comment/main/json-schema/github-comment.json
+# https://suzuki-shunsuke.github.io/github-comment/
+# github-comment works without configuration file. All settings are optional.
+skip_no_token: false
+vars:
+  repository: "{{.Org}}/{{.Repo}}"
+exec:
+  changelog:
+    template: |
+      {{.Stdout}}
+hide:
+  changelog: 'Comment.HasMeta && (Comment.Meta.SHA1 != Commit.SHA1 && Comment.Meta.Vars.target == "changelog" && Comment.Meta.Vars.repository == Vars.repository)'

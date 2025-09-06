@@ -172,7 +172,7 @@ runs:
         INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
         INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
         GITHUB_TOKEN: ${{ github.token }}
-      run: github-comment hide -k "${INPUTS_OWNER}/${INPUTS_REPO}"
+      run: github-comment hide -k changelog -v "repository:${INPUTS_OWNER}/${INPUTS_REPO}"
       working-directory: ${{ github.action_path }}
       if: inputs.comment_to_issue != '' && inputs.comment_mode == 'hide'
     - name: Comment to
@@ -186,15 +186,16 @@ runs:
       run: |
         GITHUB_COMMENT_OPTIONS=()
         if [ "${INPUTS_COMMENT_MODE}" != 'hide' ]; then
-          GITHUB_COMMENT_OPTIONS+=('-u' "TemplateKey == \"${INPUTS_OWNER}/${INPUTS_REPO}\"")
+          GITHUB_COMMENT_OPTIONS+=('-u' 'Comment.Meta.Vars.target == "changelog" && Comment.Meta.Vars.repository == Vars.repository')
         fi
-        github-comment post \
+        github-comment exec \
           --org "${INPUTS_OWNER}" \
           --repo "${INPUTS_REPO}" \
           --pr "${INPUTS_COMMENT_TO_ISSUE}" \
           "${GITHUB_COMMENT_OPTIONS[@]}" \
-          -k "${INPUTS_OWNER}/${INPUTS_REPO}" \
-          -stdin-template < "${{ runner.temp }}/changelog.md"
+          -k changelog \
+          -v "repository:${INPUTS_OWNER}/${INPUTS_REPO}" \
+          -- cat "${{ runner.temp }}/changelog.md"
       working-directory: ${{ github.action_path }}
       if: inputs.comment_to_issue != ''
 
