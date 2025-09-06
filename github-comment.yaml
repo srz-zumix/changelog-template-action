@@ -5,6 +5,10 @@
 skip_no_token: false
 vars:
   repository: "{{.Org}}/{{.Repo}}"
+post:
+  changelog:
+    template: |
+      {{.Stdin}}
 exec:
   changelog:
     template: |

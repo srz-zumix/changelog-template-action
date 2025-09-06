@@ -196,7 +196,7 @@ runs:
           "${GITHUB_COMMENT_OPTIONS[@]}" \
           -k changelog \
           -v "repository:${INPUTS_OWNER}/${INPUTS_REPO}" \
-          - < "${{ runner.temp }}/changelog.md"
+          --stdin-template < "${{ runner.temp }}/changelog.md"
       working-directory: ${{ github.action_path }}
       if: inputs.comment_to_issue != ''
 
