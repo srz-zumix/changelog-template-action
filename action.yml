@@ -34,7 +34,7 @@ inputs:
   comment_to_issue:
     description: 'issue or pull request number to post comment (if not set, no comment)'
     required: false
-   comment_mode:
+  comment_mode:
     description: 'update or hide previous comment [update|hide]'
     default: 'hide'
     required: false
