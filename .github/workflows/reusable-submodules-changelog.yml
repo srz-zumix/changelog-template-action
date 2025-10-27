@@ -81,7 +81,7 @@ jobs:
           ${{ steps.changelog.outputs.text }}
           EOS
       - name: Upload changelog
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
@@ -161,7 +161,7 @@ jobs:
           ${{ steps.changelog.outputs.text }}
           EOS
       - name: Upload changelog
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
