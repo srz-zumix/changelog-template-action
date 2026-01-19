@@ -150,7 +150,7 @@ jobs:
           to: "${{ matrix.to }}"
           output_file: ${{ runner.temp }}/changelog.md
       - name: Comment to
-        uses: srz-zumix/retry-run-action@v0
+        uses: srz-zumix/retry-run-action@v1
         with:
           run: |
             # shellcheck disable=SC2016
