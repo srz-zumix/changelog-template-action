@@ -48,7 +48,7 @@ jobs:
       repo: "${{ inputs.repo || 'docker-googletest' }}"
       from: "${{ inputs.from || '' }}"
       to: "${{ inputs.to || '' }}"
-      pr: "${{ inputs.pr || '25' }}"
+      pr: "${{ inputs.pr || '28' }}"
       comment_mode: "update"
     secrets:
       GH_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}
