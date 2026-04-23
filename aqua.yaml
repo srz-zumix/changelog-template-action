@@ -18,6 +18,3 @@ packages:
   tags:
     - dev
     - ci
-- name: suzuki-shunsuke/github-comment@v6.3.4
-  tags:
-    - action
