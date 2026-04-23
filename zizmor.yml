@@ -4,6 +4,9 @@ rules:
       - test.yml
       - test-self.yml
   unpinned-uses:
+    config:
+      policies:
+        actions/*: any
     ignore:
       - reusable-pr-submodules-changelog-comment.yml:146
       - reusable-submodules-changelog.yml:70
