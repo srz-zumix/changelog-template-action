@@ -31,6 +31,13 @@ inputs:
   kamidana_additionals:
     description: 'kamidana additionals modules'
     required: false
+  comment_to_issue:
+    description: 'issue or pull request number to post comment (if not set, no comment)'
+    required: false
+  comment_mode:
+    description: 'how to handle previous comments [update|hide|delete|none]'
+    default: 'hide'
+    required: false
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -127,10 +134,10 @@ runs:
       if: inputs.template_file == ''
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@v2
+      uses: srz-zumix/kamidana-action@f83fd111b652b0833f00f32a41b45945fb343778 # v2.7.0
       with:
         template: "${{ inputs.template_file || steps.create-template-file.outputs.path }}"
-        output_file: "${{ inputs.output_file }}"
+        output_file: "${{ runner.temp }}/changelog.md"
         data_files: |
           ${{ runner.temp }}/associatedPullRequests.json
           ${{ runner.temp }}/revision.json
@@ -143,7 +150,25 @@ runs:
           do
           loopcontrols
           debug
-
+    - name: Copy to output file
+      shell: bash
+      env:
+        INPUTS_OUTPUT_FILE: "${{ inputs.output_file }}"
+      run: |
+        if [ "${INPUTS_OUTPUT_FILE}" != "${{ runner.temp }}/changelog.md" ]; then
+          cp "${{ runner.temp }}/changelog.md" "${INPUTS_OUTPUT_FILE}"
+        fi
+      if: inputs.output_file != ''
+    - name: Comment to
+      uses: srz-zumix/comment-action@780c4d41e67b6ffa8e38f5755076fe426ccac43e # main
+      with:
+        pr-number: "${{ inputs.comment_to_issue }}"
+        body-file: "${{ runner.temp }}/changelog.md"
+        group: "changelog/${{ steps.resolve-owner-repo.outputs.owner }}/${{ steps.resolve-owner-repo.outputs.repo }}"
+        update: "${{ inputs.comment_mode == 'update' }}"
+        delete: "${{ inputs.comment_mode == 'delete' }}"
+        hide: "${{ inputs.comment_mode == 'hide' && 'OUTDATED' || '' }}"
+      if: inputs.comment_to_issue != ''
 
 branding:
   icon: 'sliders'

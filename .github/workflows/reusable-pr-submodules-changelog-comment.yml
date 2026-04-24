@@ -39,9 +39,9 @@ on:
         description: 'github host'
         default: github.com
         type: string
-      gh_comment_options:
-        description: 'gh pr comment options'
-        default: ''
+      comment_mode:
+        description: 'update or hide previous comment [update|hide]'
+        default: 'hide'
         required: false
         type: string
 
@@ -55,6 +55,9 @@ env:
   GH_HOST: ${{ inputs.host }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   GH_ENTERPRISE_TOKEN: ${{ secrets.GH_ENTERPRISE_TOKEN }}
+  INPUTS_PR: ${{ inputs.pr }}
+  INPUTS_OWNER: ${{ inputs.owner }}
+  INPUTS_REPO: ${{ inputs.repo }}
 
 jobs:
   get-submodules-diff:
@@ -71,7 +74,7 @@ jobs:
       - name: Resolove to
         id: resolve-to
         run: |
-          TO_SHA=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json headRefOid --jq '.headRefOid')
+          TO_SHA=$(gh pr view "${INPUTS_PR}" --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json headRefOid --jq '.headRefOid')
           echo "sha=${TO_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.to == ''
       - name: Resolove from
@@ -79,8 +82,8 @@ jobs:
           INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
         id: resolve-from
         run: |
-          FROM_REF=$(gh pr view ${{ inputs.pr }} --repo "${{ inputs.owner }}/${{ inputs.repo }}" --json baseRefName --jq '.baseRefName')
-          FROM_SHA=$(gh api "repos/${{ inputs.owner }}/${{ inputs.repo }}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
+          FROM_REF=$(gh pr view "${INPUTS_PR}" --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json baseRefName --jq '.baseRefName')
+          FROM_SHA=$(gh api "repos/${INPUTS_OWNER}/${INPUTS_REPO}/compare/${FROM_REF}...${INPUTS_TO}" --jq '.merge_base_commit.sha')
           echo "sha=${FROM_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.from == ''
       - name: Get submodules form/to
@@ -90,8 +93,6 @@ jobs:
           INPUTS_HOST: "${{ inputs.host }}"
           INPUTS_FROM: "${{ inputs.from || steps.resolve-from.outputs.sha }}"
           INPUTS_TO: "${{ inputs.to || steps.resolve-to.outputs.sha }}"
-          INPUTS_OWNER: "${{ inputs.owner }}"
-          INPUTS_REPO: "${{ inputs.repo }}"
         run: |
           # shellcheck disable=SC2016
           gh api graphql \
@@ -148,11 +149,5 @@ jobs:
           git_url: "${{ matrix.gitUrl }}"
           from: "${{ matrix.from }}"
           to: "${{ matrix.to }}"
-          output_file: ${{ runner.temp }}/changelog.md
-      - name: Comment to
-        uses: srz-zumix/retry-run-action@v0
-        with:
-          run: |
-            # shellcheck disable=SC2016
-            gh pr comment -R "${{ inputs.owner }}/${{ inputs.repo }}" "${{ inputs.pr }}" --body-file ${{ runner.temp }}/changelog.md ${{ inputs.gh_comment_options }}
-        if: steps.changelog.outputs.commit_count > 0
+          comment_to_issue: ${{ inputs.pr }}
+          comment_mode: ${{ inputs.comment_mode }}

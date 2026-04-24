@@ -26,9 +26,7 @@ on:
       - created
       - edited
 
-permissions:
-  contents: write
-  pull-requests: read
+permissions: {}
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,9 +43,14 @@ jobs:
 
   update-release-notes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     needs: prepare
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: changelog
         id: changelog
         uses: ./
@@ -59,7 +62,9 @@ jobs:
           tee: true
           debug: true
       - name: update
+        env:
+          TAG_NAME: ${{ inputs.to || github.event.release.tag_name }}
         run: |
-          gh release edit ${{ inputs.to || github.event.release.tag_name }} -F changelog.md
+          gh release edit "${TAG_NAME}" -F changelog.md
 
 

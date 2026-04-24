@@ -21,7 +21,7 @@ on:
         required: false
       pr:
         description: 'pull request number'
-        default: '25'
+        default: '28'
         required: false
 
 permissions:
@@ -48,7 +48,7 @@ jobs:
       repo: "${{ inputs.repo || 'docker-googletest' }}"
       from: "${{ inputs.from || '' }}"
       to: "${{ inputs.to || '' }}"
-      pr: "${{ inputs.pr || '25' }}"
-      gh_comment_options: "--edit-last"
+      pr: "${{ inputs.pr || '28' }}"
+      comment_mode: "update"
     secrets:
       GH_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}
