@@ -46,6 +46,9 @@ jobs:
 
   update_release_notes:
     needs: publish_release
+    permissions:
+      contents: write
+      pull-requests: read
     uses: ./.github/workflows/update_releasenote.yml
     with:
       to: ${{ needs.publish_release.outputs.tag_name }}
