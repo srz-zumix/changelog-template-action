@@ -160,7 +160,7 @@ runs:
         fi
       if: inputs.output_file != ''
     - name: Comment to
-      uses: srz-zumix/comment-action@780c4d41e67b6ffa8e38f5755076fe426ccac43e # main
+      uses: srz-zumix/comment-action@f41442d586140d09fdbed18150ce5b9a4cd00670 # v0.3.0
       with:
         pr-number: "${{ inputs.comment_to_issue }}"
         body-file: "${{ runner.temp }}/changelog.md"
