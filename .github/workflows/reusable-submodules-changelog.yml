@@ -84,7 +84,7 @@ jobs:
         run: |
           cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
@@ -167,7 +167,7 @@ jobs:
         run: |
           cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
