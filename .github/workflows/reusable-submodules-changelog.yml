@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Get parent changelog
@@ -146,7 +146,7 @@ jobs:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
     name: submodules-changelog - ${{ matrix.name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
         if: inputs.template_file != ''
