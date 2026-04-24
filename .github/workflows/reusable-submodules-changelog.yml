@@ -67,7 +67,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Get parent changelog
-        uses: srz-zumix/changelog-template-action@feature/github-comment
+        uses: srz-zumix/changelog-template-action@main
         id: changelog
         with:
           template_file: "${{ inputs.template_file }}"
@@ -152,7 +152,7 @@ jobs:
         if: inputs.template_file != ''
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@feature/github-comment
+        uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
           template_file: "${{ inputs.template_file }}"

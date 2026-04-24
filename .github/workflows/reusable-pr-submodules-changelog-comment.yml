@@ -143,7 +143,7 @@ jobs:
     steps:
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@feature/github-comment
+        uses: srz-zumix/changelog-template-action@main
         with:
           template: "${{ inputs.template }}"
           git_url: "${{ matrix.gitUrl }}"
