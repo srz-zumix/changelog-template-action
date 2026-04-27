@@ -134,7 +134,7 @@ runs:
       if: inputs.template_file == ''
     - name: kamidana
       id: kamidana
-      uses: srz-zumix/kamidana-action@f83fd111b652b0833f00f32a41b45945fb343778 # v2.7.0
+      uses: srz-zumix/kamidana-action@a6bb4009c385c154ac0ec04b988cf3f7c785c438 # v3.0.0
       with:
         template: "${{ inputs.template_file || steps.create-template-file.outputs.path }}"
         output_file: "${{ runner.temp }}/changelog.md"
