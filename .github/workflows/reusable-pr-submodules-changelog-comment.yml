@@ -44,6 +44,11 @@ on:
         default: 'hide'
         required: false
         type: string
+      fail_on_behind:
+        description: 'fail when a submodule is updated to an older commit (behind)'
+        default: true
+        required: false
+        type: boolean
 
     secrets:
       GH_TOKEN:
@@ -151,3 +156,4 @@ jobs:
           to: "${{ matrix.to }}"
           comment_to_issue: ${{ inputs.pr }}
           comment_mode: ${{ inputs.comment_mode }}
+          fail_on_behind: ${{ inputs.fail_on_behind }}
