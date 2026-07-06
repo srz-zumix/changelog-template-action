@@ -128,6 +128,7 @@ jobs:
           from: v0.10.0
           tee: true
           debug: true
+          fail_on_behind: false
       - run: |
           cat << 'EOS' | tee output.txt
           ${{ steps.changelog.outputs.text }}
