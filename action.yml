@@ -38,6 +38,10 @@ inputs:
     description: 'how to handle previous comments [update|hide|delete|none]'
     default: 'hide'
     required: false
+  fail_on_behind:
+    description: 'fail when "to" is an older commit than "from" (behind)'
+    default: true
+    required: false
   tee:
     description: 'tee gh / kamidana output'
     default: false
@@ -66,6 +70,9 @@ outputs:
   commit_count:
     description: "resolved from...to commit count"
     value: ${{ steps.resolve-from-to.outputs.commit_count }}
+  status:
+    description: "from...to compare status [ahead|behind|identical|diverged]"
+    value: ${{ steps.resolve-from-to.outputs.status }}
 
 runs:
   using: "composite"
@@ -89,6 +96,45 @@ runs:
         INPUTS_TO: "${{ inputs.to }}"
         INPUTS_DEBUG: "${{ inputs.debug }}"
       run: "${GITHUB_ACTION_PATH}/resolve-from-to.sh"
+    - name: Create downgrade comment
+      id: downgrade-comment
+      shell: bash
+      env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
+      run: |
+        {
+          echo ":warning: **Downgrade detected**"
+          echo ""
+          echo "\`${INPUTS_OWNER}/${INPUTS_REPO}\` is being updated to an older commit."
+          echo ""
+          echo "- from: \`${INPUTS_FROM}\`"
+          echo "- to: \`${INPUTS_TO}\`"
+          echo ""
+          echo "[Compare](${GITHUB_SERVER_URL}/${INPUTS_OWNER}/${INPUTS_REPO}/compare/${INPUTS_FROM}...${INPUTS_TO})"
+        } > "${{ runner.temp }}/downgrade.md"
+      if: steps.resolve-from-to.outputs.status == 'behind'
+    - name: Comment downgrade to
+      uses: srz-zumix/comment-action@f41442d586140d09fdbed18150ce5b9a4cd00670 # v0.3.0
+      with:
+        pr-number: "${{ inputs.comment_to_issue }}"
+        body-file: "${{ runner.temp }}/downgrade.md"
+        group: "downgrade/${{ steps.resolve-owner-repo.outputs.owner }}/${{ steps.resolve-owner-repo.outputs.repo }}"
+        update: true
+      if: steps.resolve-from-to.outputs.status == 'behind' && inputs.comment_to_issue != ''
+    - name: Fail on downgrade
+      shell: bash
+      env:
+        INPUTS_OWNER: "${{ steps.resolve-owner-repo.outputs.owner }}"
+        INPUTS_REPO: "${{ steps.resolve-owner-repo.outputs.repo }}"
+        INPUTS_FROM: "${{ steps.resolve-from-to.outputs.from }}"
+        INPUTS_TO: "${{ steps.resolve-from-to.outputs.to }}"
+      run: |
+        echo "::error title=Downgrade detected::${INPUTS_OWNER}/${INPUTS_REPO} is being updated to an older commit: ${INPUTS_FROM} -> ${INPUTS_TO}"
+        exit 1
+      if: steps.resolve-from-to.outputs.status == 'behind' && inputs.fail_on_behind == 'true'
     - name: create associatedPullRequests.json
       shell: bash
       env:
