@@ -79,7 +79,11 @@ jobs:
       - name: Resolove to
         id: resolve-to
         run: |
-          TO_SHA=$(gh pr view "${INPUTS_PR}" --repo "${INPUTS_OWNER}/${INPUTS_REPO}" --json headRefOid --jq '.headRefOid')
+          TO_SHA=$(gh api "repos/${INPUTS_OWNER}/${INPUTS_REPO}/pulls/${INPUTS_PR}" --jq '.merge_commit_sha // empty')
+          if [[ -z "${TO_SHA}" ]]; then
+            echo "PR #${INPUTS_PR} has no merge commit; specify 'to' explicitly or resolve merge conflicts." >&2
+            exit 1
+          fi
           echo "sha=${TO_SHA}" >> "${GITHUB_OUTPUT}"
         if: inputs.to == ''
       - name: Resolove from
