@@ -32,7 +32,7 @@ on:
         type: string
       to:
         description: 'git commit revision range end to'
-        default: "${{ github.event.pull_request.head.sha || '' }}"
+        default: "${{ github.event_name == 'pull_request' && github.sha || '' }}"
         required: false
         type: string
       host:
