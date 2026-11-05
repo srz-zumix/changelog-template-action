@@ -45,6 +45,18 @@ jobs:
 
 ## Example
 
+### PR submodule changelog comments
+
+The reusable workflow `.github/workflows/reusable-pr-submodules-changelog-comment.yml`
+accepts a commit SHA or ref for `from`. By default, it uses `github.base_ref`,
+resolving the PR base branch at execution time rather than using the event's base
+SHA. The submodule comparison therefore excludes changes already on the base
+branch.
+
+If `from` is empty (including when `github.base_ref` is unavailable), the workflow
+uses the merge base of the target PR's base branch and `to`. Explicit `from`
+values continue to take precedence.
+
 ### Update Release Notes on published
 
 ```yaml

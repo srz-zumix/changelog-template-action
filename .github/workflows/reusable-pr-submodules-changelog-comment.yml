@@ -26,8 +26,8 @@ on:
         required: false
         type: string
       from:
-        description: 'git commit revision range start from'
-        default: "${{ github.event.pull_request.base.sha || '' }}"
+        description: 'git revision range start (SHA or ref; defaults to the current PR base branch)'
+        default: "${{ github.base_ref || '' }}"
         required: false
         type: string
       to:
@@ -152,7 +152,7 @@ jobs:
     steps:
       - name: Get changelog
         id: changelog
-        uses: srz-zumix/changelog-template-action@main
+        uses: $/.
         with:
           template: "${{ inputs.template }}"
           git_url: "${{ matrix.gitUrl }}"
