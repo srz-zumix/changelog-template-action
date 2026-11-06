@@ -26,8 +26,8 @@ on:
         required: false
         type: string
       from:
-        description: 'git revision range start (SHA or ref; defaults to the current PR base branch)'
-        default: "${{ github.base_ref || '' }}"
+        description: 'git revision range start (SHA or ref; defaults to the merge base of the PR base branch and to)'
+        default: ''
         required: false
         type: string
       to:
