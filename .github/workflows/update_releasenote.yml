@@ -48,12 +48,9 @@ jobs:
       pull-requests: read
     needs: prepare
     steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
       - name: changelog
         id: changelog
-        uses: ./
+        uses: $/
         with:
           template_file: templates/release-note-with-body.md.j2
           output_file: changelog.md
