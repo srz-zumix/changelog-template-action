@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - name: Get parent changelog
@@ -84,7 +84,7 @@ jobs:
         run: |
           cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
@@ -146,7 +146,7 @@ jobs:
           "${{ fromJson( needs.parent-changelog.outputs.submodules ) }}"
     name: submodules-changelog - ${{ matrix.name }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
         if: inputs.template_file != ''
@@ -167,7 +167,7 @@ jobs:
         run: |
           cp ${{ runner.temp }}/changelog.md "${OUTPUT_FILE}"
       - name: Upload changelog
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog
           path: ${{ steps.changelog.outputs.owner }}-${{ steps.changelog.outputs.repo }}-changelog.md
