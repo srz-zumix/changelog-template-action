@@ -32,6 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
+      - name: Checkout templates
+        uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: templates/
+          persist-credentials: false
       - name: changelog
         id: changelog
         uses: $/
@@ -52,6 +57,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
+      - name: Checkout templates
+        uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: templates/
+          persist-credentials: false
       - name: changelog
         id: changelog
         uses: $/
@@ -70,6 +80,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
+      - name: Checkout templates
+        uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: templates/
+          persist-credentials: false
       - name: changelog
         id: changelog
         uses: $/

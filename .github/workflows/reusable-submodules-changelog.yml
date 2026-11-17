@@ -63,8 +63,10 @@ jobs:
         run: |
           echo "${GITHUB_CONTEXT}"
         if: false
-      - uses: actions/checkout@v7.0.1
+      - name: Checkout templates
+        uses: actions/checkout@v7.0.1
         with:
+          sparse-checkout: templates/
           persist-credentials: false
       - name: Get parent changelog
         uses: $/.
@@ -148,6 +150,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
         with:
+          sparse-checkout: templates/
           persist-credentials: false
         if: inputs.template_file != ''
       - name: Get changelog
