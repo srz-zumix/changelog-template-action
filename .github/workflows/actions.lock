@@ -21,12 +21,15 @@ workflows:
     '.github/workflows/test-reusable.yml':
         - 'srz-zumix/github-actions-rebuilder@v0.2.0'
     '.github/workflows/test-self.yml':
+        - 'actions/checkout@v7.0.1'
         - 'srz-zumix/comment-action@v0.4.0'
         - 'srz-zumix/kamidana-action@v3.2.0'
     '.github/workflows/test.yml':
+        - 'actions/checkout@v7.0.1'
         - 'srz-zumix/comment-action@v0.4.0'
         - 'srz-zumix/kamidana-action@v3.2.0'
     '.github/workflows/update_releasenote.yml':
+        - 'actions/checkout@v7.0.1'
         - 'srz-zumix/comment-action@v0.4.0'
         - 'srz-zumix/kamidana-action@v3.2.0'
     '.github/workflows/update_semver.yml':
