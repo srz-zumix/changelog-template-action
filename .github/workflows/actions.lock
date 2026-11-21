@@ -35,6 +35,8 @@ workflows:
     '.github/workflows/update_semver.yml':
         - 'actions/checkout@v7.0.1'
         - 'haya14busa/action-update-semver@v1.5.1'
+    '.github/workflows/verify-lockfile.yml':
+        - 'actions/checkout@v7.0.1'
     '.github/workflows/zizmor.yml':
         - 'actions/checkout@v7.0.1'
         - 'zizmorcore/zizmor-action@v0.8.1'
