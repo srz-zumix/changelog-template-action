@@ -4,7 +4,7 @@
 version: 'v0.0.3'
 workflows:
     '.github/workflows/release-drafter.yml':
-        - 'release-drafter/release-drafter@v7.10.0'
+        - 'release-drafter/release-drafter@v7.11.0'
     '.github/workflows/reusable-pr-submodules-changelog-comment.yml':
         - 'srz-zumix/comment-action@68d22921f0ded7b1f153a99de60784b258824380'
         - 'srz-zumix/kamidana-action@7d9511d78d352737a27ee620024262703af102c6'
@@ -15,8 +15,8 @@ workflows:
         - 'srz-zumix/kamidana-action@7d9511d78d352737a27ee620024262703af102c6'
     '.github/workflows/reviewdog.yml':
         - 'actions/checkout@v7.0.1'
-        - 'reviewdog/action-actionlint@v1.81.1'
-        - 'reviewdog/action-shellcheck@v1.34.1'
+        - 'reviewdog/action-actionlint@v1.84.1'
+        - 'reviewdog/action-shellcheck@v1.35.1'
     '.github/workflows/test-reusable-pr-submodules-changelog-comment.yml': []
     '.github/workflows/test-reusable.yml':
         - 'srz-zumix/github-actions-rebuilder@v0.2.0'
@@ -81,14 +81,14 @@ dependencies:
         commit: 'sha1-7d2c558640ea49e798d46539536190aff8c18715'
         owner_id: 3797062
         repo_id: 225328382
-    'release-drafter/release-drafter@v7.10.0':
-        ref: 'v7.10.0'
-        commit: 'sha1-978bb0b30c5ee8cdd332ced253758157150d43f0'
+    'release-drafter/release-drafter@v7.11.0':
+        ref: 'v7.11.0'
+        commit: 'sha1-d1a19e60e81a7e650d00a7de9277f87e439117ea'
         owner_id: 58292376
         repo_id: 139022359
-    'reviewdog/action-actionlint@v1.81.1':
-        ref: 'v1.81.1'
-        commit: 'sha1-619a81ec64ff8c0211cd6146eb2b21e8f1d7f440'
+    'reviewdog/action-actionlint@v1.84.1':
+        ref: 'v1.84.1'
+        commit: 'sha1-ae857e78c1b42b3d0a49637181b09d3d56d402b4'
         owner_id: 48765237
         repo_id: 385059686
     'reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f':
@@ -96,9 +96,9 @@ dependencies:
         commit: 'sha1-d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f'
         owner_id: 48765237
         repo_id: 286005511
-    'reviewdog/action-shellcheck@v1.34.1':
-        ref: 'v1.34.1'
-        commit: 'sha1-d0b8d5fd7fad6afdb6e1b6ce1778892be4d1f427'
+    'reviewdog/action-shellcheck@v1.35.1':
+        ref: 'v1.35.1'
+        commit: 'sha1-950c9d71535c8c49e5c029c33a438ade63b9009c'
         owner_id: 48765237
         repo_id: 211116201
         uses:
